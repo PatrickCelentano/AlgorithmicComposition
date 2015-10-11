@@ -22,6 +22,13 @@ CXX := g++
 CXX_FLAGS := -Wall -fstack-protector-all -fpic -Wstack-protector -D_FORTIFY_SOURCE=2
 MKDIR := mkdir
 
+# Debug mode toggle
+ifeq ($(DEBUG), 1)
+	CXX_FLAGS += -DDEBUG
+else
+	CXX_FLAGS += -DNDEBUG -mwindows
+endif
+
 # Phony targets
 .PHONY: run
 
@@ -37,6 +44,7 @@ $(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp | $(BIN_DIR)
 $(BIN_DIR) :
 	$(MKDIR) $@
 
+# Run target
 run : $(EXECUTABLE)
 	@echo Running MxM!
 	@$(EXECUTABLE)
