@@ -22,6 +22,9 @@ CXX := g++
 CXX_FLAGS := -Wall -fstack-protector-all -fpic -Wstack-protector -D_FORTIFY_SOURCE=2
 MKDIR := mkdir
 
+# Phony targets
+.PHONY: run
+
 # Compile executable from objects
 $(EXECUTABLE) : $(OBJECTS) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) -I$(INC_DIR) $^ -o $@
@@ -33,3 +36,7 @@ $(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp | $(BIN_DIR)
 # Create output directory
 $(BIN_DIR) :
 	$(MKDIR) $@
+
+run : $(EXECUTABLE)
+	@echo Running MxM!
+	@$(EXECUTABLE)
