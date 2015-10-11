@@ -30,7 +30,7 @@ else
 endif
 
 # Phony targets
-.PHONY: run
+.PHONY: run clean
 
 # Compile executable from objects
 $(EXECUTABLE) : $(OBJECTS) | $(BIN_DIR)
@@ -48,3 +48,10 @@ $(BIN_DIR) :
 run : $(EXECUTABLE)
 	@echo Running MxM!
 	@$(EXECUTABLE)
+	
+# Clean target
+clean:
+	@echo Cleaning
+	@rm -f $(OBJECTS)
+	@rm -f $(EXECUTABLE)
+	
