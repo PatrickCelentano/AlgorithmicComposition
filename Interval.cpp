@@ -1,5 +1,4 @@
 #include "Interval.hpp"
-#include "Pitch.hpp"
 
 int Interval::getQuality() const
 {
@@ -34,6 +33,7 @@ std::string Interval::getASCII() const
 		case 5: 		toReturn += "5";	break;
 		case 6: 		toReturn += "6";	break;
 		case 7: 		toReturn += "7";	break;
+		case 8:			toReturn += "8";	break;
 	}
 	if(number > 8)
 	{

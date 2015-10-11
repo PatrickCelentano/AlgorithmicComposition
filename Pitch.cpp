@@ -57,6 +57,9 @@ void Pitch::repInvariant() const
 		std::cerr << "This note is invalid!" << std::endl;
 	}
 }
+
+
+// Adds a given Interval to a Pitch, creating a new Pitch.
 Pitch operator+(const Pitch &a, const Interval &b)
 {
 	
@@ -167,7 +170,115 @@ Pitch operator+(const Pitch &a, const Interval &b)
 	}
 	return Pitch(newPClass,newAccidental,newOctave);
 }
+
+
+// Subtracts a given Interval from a Pitch, creating a new Pitch.
 Pitch operator-(const Pitch &a, const Interval &b)
 {
-	return Pitch();
+	// Plus six to avoid negative numbers coming from a modulus
+	// Minus one because adding six would mess with octave logic 
+	int newPClass		= (a.getClass()+8-b.getNumber())%7;
+	int newAccidental	= a.getAccidental();
+	int newOctave		= (a.getClass()-5-b.getNumber())/7 + a.getOctave() - b.getOctaves();
+	
+	switch(b.getNumber())
+	{
+		// The cases for unisons
+		case 1:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 1;	break;
+				case PERFECT:							break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			break;
+			
+		// The cases for seconds
+		case 2:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 2;	break;
+				case MINOR:			newAccidental += 1;	break;
+				case MAJOR:								break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() == C || a.getClass() == F)
+			{
+				newAccidental--;
+			}
+			break;
+			
+		// The cases for thirds	
+		case 3:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 2;	break;
+				case MINOR:			newAccidental += 1;	break;
+				case MAJOR:								break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() != E && a.getClass() != A && a.getClass() != B)
+			{
+				newAccidental--;
+			}
+			break;
+			
+		// The cases for fourths
+		case 4:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 1;	break;
+				case PERFECT:							break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() == B)
+			{
+				newAccidental++;
+			}
+			break;
+			
+		// The cases for fifths
+		case 5:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 1;	break;
+				case PERFECT:							break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() == F)
+			{
+				newAccidental--;
+			}
+			break;
+			
+		// The cases for sixths
+		case 6:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 2;	break;
+				case MINOR:			newAccidental += 1;	break;
+				case MAJOR:								break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() == C || a.getClass() == G || a.getClass() == E)
+			{
+				newAccidental--;
+			}
+			break;
+
+		// The cases for sevenths
+		case 7:
+			switch(b.getQuality())
+			{
+				case DIMINISHED:	newAccidental += 2;	break;
+				case MINOR:			newAccidental += 1;	break;
+				case MAJOR:								break;
+				case AUGMENTED:		newAccidental -= 1;	break;
+			}
+			if(a.getClass() != E && a.getClass() != B)
+			{
+				newAccidental--;
+			}
+	}
+	return Pitch(newPClass,newAccidental,newOctave);
 }
