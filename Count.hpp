@@ -7,14 +7,14 @@
 #include <iostream>
 #include "Defines.hpp"
 
-// A class time in a musical sense. The base unit is the whole note.
-// There is only one valid representation of a beat, with a given
-// number of whole-note beats and subdivision.
+// A class representing time in a musical sense. The base unit is
+// the whole note. There is only one valid representation of a beat,
+// with a given number of whole-note beats and subdivision.
 class Count
 {
 	public:
 		int getBeat() const;			// Gets the count within the given subdivision
-		int getSubdivision() const;		// Gets the subdivision og this note (quarter, half...)
+		int getSubdivision() const;		// Gets the subdivision of this note (quarter, half...)
 		std::string getASCII() const;	// Returns an ASCII representation of this Count
 		void repInvariant() const;		// Ensures this class is valid
 		
