@@ -1,6 +1,5 @@
-#include "Pitch.hpp"
-#include "Interval.hpp"
-#include "Count.hpp"
+#include "Base.hpp"
+#include "Line.hpp"
 #include "Defines.hpp"
 #include <iostream>
 
@@ -8,11 +7,33 @@ using namespace std;
 
 int main()
 {
-	Pitch a(C,NATURAL,4);
-	Count b = Count(1,2);
+	
+	Note a(Pitch(C,NATURAL,4),Count(1,4));
+	Note b(Pitch(B,NATURAL,4),Count(1,4));
+	Note c(Pitch(REST),Count(1,4));
+	Note d(Pitch(D,NATURAL,5),Count(1,4));
+	
+	Line melody;
+	melody.add(a);
+	melody.add(b);
+	melody.add(c);
+	melody.add(d);
+	
+	cout << melody.getLilyPond();
+	
+	return 0;
+}
 
+
+
+
+	//Pitch a(C,NATURAL,4);
+	//Count b = Count(1,2);
+
+	/*
 	cout << b.getASCII() << endl;
 	cout << (b/3+b/2).getASCII() << endl;
+	*/
 	
 	//Scale s(C,MAJOR);
 	//Key k(C,MAJOR);
@@ -71,6 +92,3 @@ int main()
 	// cout << "Minus " << Interval(PERFECT,8).getASCII() << endl;
 	cout << (a-Interval(PERFECT,8)).getASCII() << endl;
 	*/
-	
-	return 0;
-}

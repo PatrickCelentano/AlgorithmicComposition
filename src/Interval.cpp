@@ -1,4 +1,4 @@
-#include "Interval.hpp"
+#include "Base.hpp"
 
 int Interval::getQuality() const
 {
@@ -44,11 +44,11 @@ std::string Interval::getASCII() const
 	}
 	return toReturn;
 }
-void Interval::repInvariant() const
+void Interval::checkRep() const
 {
 	if(	quality != DIMINISHED &&
 		quality != MINOR &&
-		quality != PERFECT &
+		quality != PERFECT &&
 		quality != MAJOR &&
 		quality != AUGMENTED )
 	{

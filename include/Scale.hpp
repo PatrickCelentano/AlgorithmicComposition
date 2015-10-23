@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <iostream>
 #include "Interval.hpp"
-#include "Pitch.hpp"
+#include "Note.hpp"
 #include "Defines.hpp"
 
 

@@ -1,40 +1,34 @@
-#ifndef __LINE_HPP__
-#define __LINE_HPP__
+#ifndef __PHRASE_HPP__
+#define __PHRASE_HPP__
 
 #include <string>
 #include <cstdlib>
 #include <stdint.h>
 #include <iostream>
-#include <vector>
 #include "Defines.hpp"
-#include "Base.hpp"
 
 // An MxM Melody is a string of Events, which are to be "played"
 // by a voice sequentially. (Think horizontally, not vertically)
-class Line
+class Piece
 {
 	public:
+		Count getLenth() const;
+		
+		std::vector<Part> getParts() const;		// Gets all the individual parts of this Piece
+		
+		std::vector<Melody> getMotifs() const;	// Gets all the motivic material of this Piece
+	
 		Count getLength() const;
-		/*
 		Melody getWithNewPitches(Rhythm r)
 		Melody getWithNewRhythm(Rhythm r)
 		Melody getRetrograde() const;		// Returns a new melody, just played in retrograde
 		Melody getInverstion() const;		// Returns a new melody, just played in retrograde
-		*/
-		
-		void add(const Note& n);			// Adds events to the end of this EventLine
-		std::string getLilyPond() const;
-		
 		
 		// Analysis methods
 		//float const;
 	private:
-		Count length;
-		std::vector<Note> notes;			// The notes and rests of this melody
-};
-#endif
-
-/*
+		vector<Event> events;			// The notes and rests of this melody
+	/*
 	public:
 		int getBeat() const;			// Gets the count within the given subdivision
 		int getSubdivision() const;		// Gets the subdivision og this note (quarter, half...)
@@ -51,3 +45,5 @@ class Line
 		Count length;					// The number of the given subdivision (the "and" of 1)
 		Count subdivision;				// The subdivision (quarters, triplets, etc.)
 	*/
+};
+#endif

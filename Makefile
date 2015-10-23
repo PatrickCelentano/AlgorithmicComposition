@@ -12,7 +12,7 @@ OBJECTS := $(addprefix $(BIN_DIR)/, $(notdir $(SOURCES:.cpp=.o)))
 DEPENDENCIES := $(addprefix $(DEP_DIR)/, $(notdir $(SOURCES:.cpp=.d)))
 
 # Output
-PROGRAM_NAME := MxM
+PROGRAM_NAME := MxM.exe
 EXECUTABLE := $(BIN_DIR)/$(PROGRAM_NAME)
 
 # Debug mode flag

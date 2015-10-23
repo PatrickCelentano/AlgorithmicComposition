@@ -9,6 +9,7 @@
 #define G 4
 #define A 5
 #define B 6
+#define REST 7
 
 // Accidentals
 #define DOUBLE_FLAT (-2)
@@ -49,5 +50,9 @@ class Pitch;
 class Interval;
 class Scale;
 class Count;
+class Line;
+struct Event;
+struct Rest;
+struct Note;
 
 #endif

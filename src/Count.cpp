@@ -1,4 +1,4 @@
-#include "Count.hpp"
+#include "Base.hpp"
 
 int Count::getBeat() const
 {
@@ -23,7 +23,70 @@ std::string Count::getASCII() const
 	
 	return toReturn;
 }
-void Count::repInvariant() const
+std::string Count::getLilyPond() const
+{
+	// Undotted
+	if(beat == 1)
+	{
+		if( subdivision == 1 ||
+			subdivision == 2 ||
+			subdivision == 4 ||
+			subdivision == 8 ||
+			subdivision == 16 ||
+			subdivision == 32 ||
+			subdivision == 64 ||
+			subdivision == 128)
+		{
+			char buff[3];
+			itoa(subdivision,buff,10);
+			return (std::string)buff;
+		}
+	}
+	// Dotted
+	else if(beat == 3)
+	{
+		if( subdivision == 1 ||
+			subdivision == 2 ||
+			subdivision == 4 ||
+			subdivision == 8 ||
+			subdivision == 16 ||
+			subdivision == 32 ||
+			subdivision == 64 ||
+			subdivision == 128)
+		{
+			char buff[3];
+			itoa(subdivision/2,buff,10);
+			return (std::string)buff + ".";
+		}
+	}
+	// Double dotted
+	else if(beat == 7)
+	{
+		if( subdivision == 1 ||
+			subdivision == 2 ||
+			subdivision == 4 ||
+			subdivision == 8 ||
+			subdivision == 16 ||
+			subdivision == 32 ||
+			subdivision == 64 ||
+			subdivision == 128)
+		{
+			char buff[3];
+			itoa(subdivision/4,buff,10);
+			return (std::string)buff + ".";
+		}
+	}
+	else if(beat == 4 && subdivision == 1)
+	{
+		return "\\longa";
+	}
+	else if(beat == 2 && subdivision == 1)
+	{
+		return "\\breve";
+	}
+	return "";
+}
+void Count::checkRep() const
 {
 	if(subdivision <= 0 || beat < 0)
 	{
@@ -50,16 +113,16 @@ void Count::repInvariant() const
 }
 Count::Count(): beat(0), subdivision(1)
 {
-	repInvariant();
+	checkRep();
 }
 Count::Count(int b): beat(b), subdivision(1)
 {
-	repInvariant();
+	checkRep();
 }
 Count::Count(int b, int s): beat(b), subdivision(s)
 {
 	reduce();
-	repInvariant();
+	checkRep();
 }
 void Count::reduce()
 {
