@@ -1,54 +1,120 @@
-#include "Scale.hpp"
-/*
-int Interval::getQuality() const
+#include "Harmony.hpp"
+
+Pitch Scale::getDegree(int d) const
 {
-	return quality;
+	Pitch pitch = ascending[(d+700-1)%7];
+	return Pitch(pitch.getClass(),
+				pitch.getAccidental(),
+				pitch.getOctave()+(d-1)/7);
 }
-int Interval::getNumber() const
+Pitch Scale::getDegree(int d, int p) const
 {
-	return (number-1)%7+1;
+	Pitch pitch;
+	if(p <= d)
+	{
+		pitch = ascending[(d+700-1)%7];
+	}
+	else
+	{
+		pitch = descending[(d+700-1)%7];
+	}
+	return Pitch(pitch.getClass(),
+				pitch.getAccidental(),
+				pitch.getOctave()+(d-1)/7);
 }
-int Interval::getOctaves() const
+int Scale::getNumDegrees() const
 {
-	return (number-1)/7;
+	return ascending.size();
 }
-std::string Interval::getASCII() const
+Scale::Scale()
 {
-	std::string toReturn = "";
 	
+}
+Scale::Scale(Pitch root, int scaleType)
+{
+	root = Pitch(root.getClass(),root.getAccidental(),4);
+	switch(scaleType)
+	{
+		case MAJOR:
+			ascending.push_back(root);
+			ascending.push_back(root + Interval(MAJOR,2));
+			ascending.push_back(root + Interval(MAJOR,3));
+			ascending.push_back(root + Interval(PERFECT,4));
+			ascending.push_back(root + Interval(PERFECT,5));
+			ascending.push_back(root + Interval(MAJOR,6));
+			ascending.push_back(root + Interval(MAJOR,7));
+			
+			descending.push_back(root);
+			descending.push_back(root + Interval(MAJOR,2));
+			descending.push_back(root + Interval(MAJOR,3));
+			descending.push_back(root + Interval(PERFECT,4));
+			descending.push_back(root + Interval(PERFECT,5));
+			descending.push_back(root + Interval(MAJOR,6));
+			descending.push_back(root + Interval(MAJOR,7));
+			break;
+			
+		case NATURAL_MINOR:
+			ascending.push_back(root);
+			ascending.push_back(root + Interval(MAJOR,2));
+			ascending.push_back(root + Interval(MINOR,3));
+			ascending.push_back(root + Interval(PERFECT,4));
+			ascending.push_back(root + Interval(PERFECT,5));
+			ascending.push_back(root + Interval(MINOR,6));
+			ascending.push_back(root + Interval(MINOR,7));
+			
+			descending.push_back(root);
+			descending.push_back(root + Interval(MAJOR,2));
+			descending.push_back(root + Interval(MINOR,3));
+			descending.push_back(root + Interval(PERFECT,4));
+			descending.push_back(root + Interval(PERFECT,5));
+			descending.push_back(root + Interval(MINOR,6));
+			descending.push_back(root + Interval(MINOR,7));
+			break;
+			
+		case HARMONIC_MINOR:
+			ascending.push_back(root);
+			ascending.push_back(root + Interval(MAJOR,2));
+			ascending.push_back(root + Interval(MINOR,3));
+			ascending.push_back(root + Interval(PERFECT,4));
+			ascending.push_back(root + Interval(PERFECT,5));
+			ascending.push_back(root + Interval(MINOR,6));
+			ascending.push_back(root + Interval(MAJOR,7));
+			
+			descending.push_back(root);
+			descending.push_back(root + Interval(MAJOR,2));
+			descending.push_back(root + Interval(MINOR,3));
+			descending.push_back(root + Interval(PERFECT,4));
+			descending.push_back(root + Interval(PERFECT,5));
+			descending.push_back(root + Interval(MINOR,6));
+			descending.push_back(root + Interval(MAJOR,7));
+			break;
+		
+		case MELODIC_MINOR:
+			ascending.push_back(root);
+			ascending.push_back(root + Interval(MAJOR,2));
+			ascending.push_back(root + Interval(MINOR,3));
+			ascending.push_back(root + Interval(PERFECT,4));
+			ascending.push_back(root + Interval(PERFECT,5));
+			ascending.push_back(root + Interval(MAJOR,6));
+			ascending.push_back(root + Interval(MAJOR,7));
+			
+			descending.push_back(root);
+			descending.push_back(root + Interval(MAJOR,2));
+			descending.push_back(root + Interval(MINOR,3));
+			descending.push_back(root + Interval(PERFECT,4));
+			descending.push_back(root + Interval(PERFECT,5));
+			descending.push_back(root + Interval(MINOR,6));
+			descending.push_back(root + Interval(MINOR,7));
+			break;
+	}
 	
-	switch((number - 1)%8 + 1)
-	{
-		case 1:			toReturn += "1";	break;
-		case 2:			toReturn += "2";	break;
-		case 3:			toReturn += "3";	break;
-		case 4:			toReturn += "4";	break;
-		case 5: 		toReturn += "5";	break;
-		case 6: 		toReturn += "6";	break;
-		case 7: 		toReturn += "7";	break;
-		case 8:			toReturn += "8";	break;
-	}
-	switch(quality)
-	{
-		case DIMINISHED:	toReturn += "d";	break;
-		case MINOR:			toReturn += "m";	break;
-		case PERFECT:		toReturn += "P";	break;
-		case MAJOR:			toReturn += "M";	break;
-		case AUGMENTED:		toReturn += "A";	break;
-	}
-	if(number > 8)
-	{
-
-		char buffer[2];
-		itoa((number/7),buffer,10);
-		return toReturn + buffer + "o";
-	}
-	return toReturn;
+}
+std::string Scale::getString() const
+{
+	return "";
 }
 
-
-
-Scale(int p, int a, int o):				// A constructor taking a pitch class and an octave
-			accidental(a),pClass(p), octave(o)
-			{ repInvariant(); }
-*/
+void Scale::checkRep() const
+{
+	
+}

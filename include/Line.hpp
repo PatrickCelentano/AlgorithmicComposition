@@ -9,45 +9,37 @@
 #include "Defines.hpp"
 #include "Base.hpp"
 
-// An MxM Melody is a string of Events, which are to be "played"
-// by a voice sequentially. (Think horizontally, not vertically)
+////////////////////////////////////////////////
+//                   LINE                     //
+////////////////////////////////////////////////
+// A class representing a string of notes.    //
+////////////////////////////////////////////////
 class Line
 {
 	public:
+		void addNote(Note n);				// Adds a given note to the end of the line.
+		Note getNote(int i) const;			// Gets the i-th note in this line.
+		int getRestoringForce() const;		// Gets the desire of this line to move in a given direction.
 		Count getLength() const;
+		
 		/*
 		Melody getWithNewPitches(Rhythm r)
 		Melody getWithNewRhythm(Rhythm r)
 		Melody getRetrograde() const;		// Returns a new melody, just played in retrograde
 		Melody getInverstion() const;		// Returns a new melody, just played in retrograde
 		*/
+		void checkRep() const;				// Ensures this class is valid
 		
-		void add(const Note& n);			// Adds events to the end of this EventLine
-		std::string getLilyPond() const;
+		Line(): restoringForce(0)
+			{ /*checkRep();*/ }					// The default constructor.
 		
 		
 		// Analysis methods
 		//float const;
-	private:
+	private:;
 		Count length;
 		std::vector<Note> notes;			// The notes and rests of this melody
+		int restoringForce;					// The desire of the line to move in a given direction
 };
+
 #endif
-
-/*
-	public:
-		int getBeat() const;			// Gets the count within the given subdivision
-		int getSubdivision() const;		// Gets the subdivision og this note (quarter, half...)
-		std::string getASCII() const;	// Returns an ASCII representation of this Count
-		void repInvariant() const;		// Ensures this class is valid
-		
-		Count();						// The default constructor creates a 0-beat Count
-		Count(int b);					// The one-argument constructor takes in a number of whole notes
-		Count(int b, int s);			// The full constructor takes in wholes and subdivision
-
-	private:
-		void reduce();					// Reduces the subdivision into its simplest form.
-		
-		Count length;					// The number of the given subdivision (the "and" of 1)
-		Count subdivision;				// The subdivision (quarters, triplets, etc.)
-	*/

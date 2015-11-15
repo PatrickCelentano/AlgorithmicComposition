@@ -26,7 +26,7 @@ MKDIR := mkdir
 
 # Debug mode toggle
 ifeq ($(DEBUG), 1)
-	CXX_FLAGS += -DDEBUG
+	CXX_FLAGS += -DDEBUG -g -ggdb
 else
 	CXX_FLAGS += -DNDEBUG -mwindows
 endif

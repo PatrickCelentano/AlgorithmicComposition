@@ -20,8 +20,13 @@ class Interval
 		int getOctaves() const;			// Gets the number of octaves in this interval
 		std::string getASCII() const;	// Gets the ASCII string for this pitch
 		
+		Interval& operator=(const Interval &a);
+		
 		void checkRep() const;			// Ensures this class is valid
 		
+		Interval():						// The default constructor
+			quality(0), number(1)
+			{ checkRep(); }
 		Interval(int q, int n):			// A constructor that takes only number and quality
 			quality(q), number(n)
 			{ checkRep(); }
@@ -33,6 +38,12 @@ class Interval
 		int8_t quality;		// The quality of the interval
 		int8_t number;		// The number (ie: sixth, third)
 };
+Interval operator+(const Interval &a, const Interval &b);
+Interval operator-(const Interval &a, const Interval &b);
+Interval operator+=(const Interval &a, const Interval &b);
+Interval operator-=(const Interval &a, const Interval &b);
+Interval operator-(const Pitch &a, const Pitch &b);
+bool operator==(const Interval &a, const Interval &b);
 
 
 
@@ -53,6 +64,8 @@ class Pitch
 		std::string getASCII() const;			// Gets the ASCII representation of this note
 		std::string getLilyPond() const;		// Gets the "LilyPond" format of this note
 		
+		Pitch& operator=(const Pitch &a);
+
 		void checkRep() const;					// Ensures this class is valid
 		
 		Pitch():pClass(C),
@@ -66,15 +79,22 @@ class Pitch
 		Pitch(int p, int a, int o):				// A constructor taking a pitch class and an octave
 			pClass(p),accidental(a),octave(o)
 			{ checkRep(); }
+		Pitch(const Pitch& p):					// A copy-constructor.
+			pClass(p.getClass()),
+			accidental(p.getAccidental()),
+			octave(p.getOctave())
+			{ checkRep(); }
 
 	private:
-		int8_t pClass;			// The class of this Pitch
-		int8_t accidental;		// Is this pitch sharp/flat/etc
-		int8_t octave;			// The octave of this Pitch
+		int8_t pClass;		// The class of this Pitch
+		int8_t accidental;	// Is this pitch sharp/flat/etc
+		int8_t octave;		// The octave of this Pitch
 };
-
 Pitch operator+(const Pitch &a, const Interval &b);
 Pitch operator-(const Pitch &a, const Interval &b);
+Pitch operator+=(const Pitch &a, const Interval &b);
+Pitch operator-=(const Pitch &a, const Interval &b);
+bool operator==(const Pitch &a, const Pitch &b);
 
 
 
@@ -100,17 +120,19 @@ class Count
 		Count();							// The default constructor creates a 0-beat Count
 		Count(int b);						// The one-argument constructor takes in a number of whole notes
 		Count(int b, int s);				// The full constructor takes in wholes and subdivision
+		Count(const Count& c);				// The copy constructor
 
 	private:
-		void reduce();		// Reduces the subdivision into its simplest form.
-		
 		int beat;			// The number of the given subdivision (the "and" of 1)
 		int subdivision;	// The subdivision (quarters, triplets, etc.)
+							// Note: these can't be const, due to the complexity of the constructor
 };
 
 // These operators allow counts to be combined
 Count operator+(const Count &a, const Count &b);
 Count operator-(const Count &a, const Count &b);
+Count operator+=(const Count &a, const Count &b);
+Count operator-=(const Count &a, const Count &b);
 
 // These operators allow augmentation/diminution
 Count operator*(const Count &a, int scalar);
@@ -148,6 +170,10 @@ class Note
 			{ checkRep(); }
 		Note(Pitch p, Count l):				// A constructor taking a pitch and a length
 			pitch(p),length(l)
+			{ checkRep(); }
+		Note(const Note& n):					// A copy-constructor.
+			pitch(n.getPitch()),
+			length(n.getLength())
 			{ checkRep(); }
 
 	private:

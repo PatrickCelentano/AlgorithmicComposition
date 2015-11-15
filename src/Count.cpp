@@ -119,29 +119,44 @@ Count::Count(int b): beat(b), subdivision(1)
 {
 	checkRep();
 }
-Count::Count(int b, int s): beat(b), subdivision(s)
-{
-	reduce();
-	checkRep();
-}
-void Count::reduce()
+Count::Count(int b, int s)
 {
 	// A basic algorithm for getting
 	// the greatest common divisor.
-	int a = subdivision;
-	int b = beat;
-	int c;
+	int x = s;
+	int y = b;
+	int z;
 	
-	while(a != 0)
+	while(x != 0)
 	{
-		c = a;
-		a = b%a;
-		b = c;
+		z = x;
+		x = y%x;
+		y = z;
 	}
-		
+	
 	// Divides the numbers by their gcd
-	subdivision /= b;
-    beat /= b;
+	subdivision = s/y;
+    beat = b/y;
+}
+Count::Count(const Count& c)
+{
+	// A basic algorithm for getting
+	// the greatest common divisor.
+	int x = c.getSubdivision();
+	int y = c.getBeat();
+	int z;
+	
+	while(x != 0)
+	{
+		z = x;
+		x = y%x;
+		y = z;
+	}
+	
+	// Divides the numbers by their gcd
+	subdivision = c.getSubdivision()/y;
+    beat = c.getBeat()/y;
+	checkRep();
 }
 Count operator+(const Count &a, const Count &b)
 {
@@ -150,6 +165,18 @@ Count operator+(const Count &a, const Count &b)
 					a.getSubdivision()*b.getSubdivision());
 }
 Count operator-(const Count &a, const Count &b)
+{
+	return Count(	a.getBeat()*b.getSubdivision() -
+					b.getBeat()*a.getSubdivision(),
+					a.getSubdivision()*b.getSubdivision());
+}
+Count operator+=(const Count &a, const Count &b)
+{
+	return Count(	a.getBeat()*b.getSubdivision() +
+					b.getBeat()*a.getSubdivision(),
+					a.getSubdivision()*b.getSubdivision());
+}
+Count operator-=(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() -
 					b.getBeat()*a.getSubdivision(),

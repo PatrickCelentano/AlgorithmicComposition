@@ -89,6 +89,15 @@ std::string Pitch::getLilyPond() const
 }
 
 
+Pitch& Pitch::operator=(const Pitch &p)
+{
+	pClass = p.getClass();
+	accidental = p.getAccidental();
+	octave = p.getOctave();
+	return *this;
+}
+
+
 void Pitch::checkRep() const
 {
 	if(	pClass != C &&
@@ -100,7 +109,7 @@ void Pitch::checkRep() const
 		pClass != B &&
 		pClass != REST)
 	{
-		std::cerr << "This note is invalid!" << std::endl;
+		std::cerr << "This pitch is invalid!" << std::endl;
 	}
 }
 
@@ -117,7 +126,7 @@ Pitch operator+(const Pitch &a, const Interval &b)
 	// Minus one because adding six would mess with octave logic 
 	int newPClass		= (a.getClass()+b.getNumber()+6)%7;
 	int newAccidental	= a.getAccidental();
-	int newOctave		= (a.getClass()+b.getNumber()-1)/7 + a.getOctave() + b.getOctaves();
+	int newOctave		= (a.getClass()+b.getNumber()-7)/7 + a.getOctave() + b.getOctaves();
 	
 	switch(b.getNumber())
 	{

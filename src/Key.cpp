@@ -1,14 +1,33 @@
-#include "Base.hpp"
-
-Pitch Note::getPitch() const
+#include "Harmony.hpp"
+/*
+Pitch Key::getDegree() const
 {
 	return pitch;
 }
-Count Note::getLength() const
+Pitch Key::getDegree(int octave) const
+{
+	return pitch;
+}
+
+
+
+
+
+Pitch 
+
+
+
+
+
+
+
+
+
+Count Key::getLength() const
 {
 	return length;
 }
-bool Note::isRest() const
+bool Key::isRest() const
 {
 	return pitch.isRest();
 }
@@ -24,3 +43,4 @@ void Note::checkRep() const
 {
 	
 }
+*/
