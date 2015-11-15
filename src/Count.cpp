@@ -1,14 +1,20 @@
 #include "Base.hpp"
 
+// A basic getter for beat
 int Count::getBeat() const
 {
 	return beat;
 }
+
+// A basic getter for subdivision
 int Count::getSubdivision() const
 {
 	return subdivision;
 }
-std::string Count::getASCII() const
+
+// Returns a string representation of
+// this Count that looks like: "1/4"
+std::string Count::toString() const
 {
 	std::string toReturn = "";
 	
@@ -23,102 +29,24 @@ std::string Count::getASCII() const
 	
 	return toReturn;
 }
-std::string Count::getLilyPond() const
+
+// An asignment operator.
+Count& Count::operator=(const Count &a)
 {
-	// Undotted
-	if(beat == 1)
-	{
-		if( subdivision == 1 ||
-			subdivision == 2 ||
-			subdivision == 4 ||
-			subdivision == 8 ||
-			subdivision == 16 ||
-			subdivision == 32 ||
-			subdivision == 64 ||
-			subdivision == 128)
-		{
-			char buff[3];
-			itoa(subdivision,buff,10);
-			return (std::string)buff;
-		}
-	}
-	// Dotted
-	else if(beat == 3)
-	{
-		if( subdivision == 1 ||
-			subdivision == 2 ||
-			subdivision == 4 ||
-			subdivision == 8 ||
-			subdivision == 16 ||
-			subdivision == 32 ||
-			subdivision == 64 ||
-			subdivision == 128)
-		{
-			char buff[3];
-			itoa(subdivision/2,buff,10);
-			return (std::string)buff + ".";
-		}
-	}
-	// Double dotted
-	else if(beat == 7)
-	{
-		if( subdivision == 1 ||
-			subdivision == 2 ||
-			subdivision == 4 ||
-			subdivision == 8 ||
-			subdivision == 16 ||
-			subdivision == 32 ||
-			subdivision == 64 ||
-			subdivision == 128)
-		{
-			char buff[3];
-			itoa(subdivision/4,buff,10);
-			return (std::string)buff + ".";
-		}
-	}
-	else if(beat == 4 && subdivision == 1)
-	{
-		return "\\longa";
-	}
-	else if(beat == 2 && subdivision == 1)
-	{
-		return "\\breve";
-	}
-	return "";
+	beat = a.getBeat();
+	subdivision = a.getSubdivision();
+	checkRep();
+	return *this;
 }
-void Count::checkRep() const
-{
-	if(subdivision <= 0 || beat < 0)
-	{
-		std::cerr << "This count is invalid!" << std::endl;
-	}
-	
-	int a = subdivision;
-	int b = beat;
-	int c;
-	
-	// A basic algorithm for getting
-	// the greatest common divisor.
-	while(a != 0)
-	{
-		c = a;
-		a = b%a;
-		b = c;
-	}
-	
-	if(b != 1)
-	{
-		std::cerr << "This count is invalid!" << std::endl;
-	}	
-}
+
+// The default constructor for Count
 Count::Count(): beat(0), subdivision(1)
 {
 	checkRep();
 }
-Count::Count(int b): beat(b), subdivision(1)
-{
-	checkRep();
-}
+
+// A constructor that takes in both beats
+// and a subdivision (ie: 1 and 4)
 Count::Count(int b, int s)
 {
 	// A basic algorithm for getting
@@ -138,26 +66,37 @@ Count::Count(int b, int s)
 	subdivision = s/y;
     beat = b/y;
 }
-Count::Count(const Count& c)
+
+// A copy constructor for Count
+Count::Count(const Count& c): beat(c.getBeat()), subdivision(c.getSubdivision())
 {
-	// A basic algorithm for getting
-	// the greatest common divisor.
-	int x = c.getSubdivision();
-	int y = c.getBeat();
-	int z;
-	
-	while(x != 0)
-	{
-		z = x;
-		x = y%x;
-		y = z;
-	}
-	
-	// Divides the numbers by their gcd
-	subdivision = c.getSubdivision()/y;
-    beat = c.getBeat()/y;
 	checkRep();
 }
+
+// Ensures that this class is valid
+void Count::checkRep() const
+{
+	if(subdivision <= 0 || beat < 0)
+		std::cerr << "This count is invalid!" << std::endl;
+	
+	int a = subdivision;
+	int b = beat;
+	int c;
+	
+	// A basic algorithm for getting
+	// the greatest common divisor.
+	while(a != 0)
+	{
+		c = a;
+		a = b%a;
+		b = c;
+	}
+	
+	if(b != 1)
+		std::cerr << "This count is invalid!" << std::endl;
+}
+
+// A variety of operators
 Count operator+(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() +

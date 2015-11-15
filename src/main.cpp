@@ -11,7 +11,9 @@ void scaleTest();
 
 int main()
 {
-	/*
+	return 0;
+}
+/*
 	Line melody;
 	Scale scale(Pitch(C,NATURAL,4),MAJOR);
 	for(int i = scale.getNumDegrees()+10; i > 0; i--)
@@ -24,10 +26,7 @@ int main()
 		std::cout << melody.getNote(i).getPitch().getASCII() << " ";
 	}
 	*/
-	return 0;
-}
-
-
+/*
 void intervalsTest()
 {
 	vector<Pitch> pitches;
@@ -63,7 +62,6 @@ void intervalsTest()
 		std::cout << std::endl;
 	}
 }
-
 void scaleTest()
 {
 	Scale scale(Pitch(C,NATURAL,4),MELODIC_MINOR);
@@ -88,6 +86,7 @@ void scaleTest()
 		std::cout << pitch.getASCII() << std::endl;
 	}
 }
+*/
 
 /*
 	Note a(Pitch(C,NATURAL,4),Count(1,4));

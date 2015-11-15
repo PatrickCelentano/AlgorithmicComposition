@@ -12,7 +12,7 @@ int Interval::getOctaves() const
 {
 	return (number-1)/7;
 }
-std::string Interval::getASCII() const
+std::string Interval::toString() const
 {
 	std::string toReturn = "";
 	

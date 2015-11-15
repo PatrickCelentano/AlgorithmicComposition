@@ -16,7 +16,7 @@ bool Pitch::isRest() const
 {
 	return pClass == REST;
 }
-std::string Pitch::getASCII() const
+std::string Pitch::toString() const
 {
 	std::string toReturn = "";
 	if(pClass == REST)
@@ -48,56 +48,40 @@ std::string Pitch::getASCII() const
 	itoa(octave,buffer,10);
 	return toReturn + buffer;
 }
-
-std::string Pitch::getLilyPond() const
-{
-	std::string toReturn;
-	if(pClass == REST)
-	{
-		toReturn += "r";
-	}
-	else
-	{
-		switch(pClass)
-		{
-			case C:				toReturn += "c";	break;
-			case D:				toReturn += "d";	break;
-			case E:				toReturn += "e";	break;
-			case F:				toReturn += "f";	break;
-			case G:				toReturn += "g";	break;
-			case A:				toReturn += "a";	break;
-			case B:				toReturn += "b";	break;
-		}
-		switch(accidental)
-		{
-			case DOUBLE_FLAT:	toReturn += "ff";	break;
-			case FLAT:			toReturn += "f";	break;
-			case NATURAL:		toReturn += "";		break;
-			case SHARP:			toReturn += "s";	break;
-			case DOUBLE_SHARP: 	toReturn += "x";	break;
-		}
-		for(int i = octave-4; i >= 0; i--)
-		{
-			toReturn += ",";
-		}
-		for(int i = 0; i < octave-4; i++)
-		{
-			toReturn += "'";
-		}
-	}
-  return toReturn;
-}
-
-
 Pitch& Pitch::operator=(const Pitch &p)
 {
 	pClass = p.getClass();
 	accidental = p.getAccidental();
 	octave = p.getOctave();
+	checkRep();
 	return *this;
 }
 
+// The default constructor creates a C4.
+Pitch::Pitch(): pClass(C), accidental(NATURAL), octave(4)
+{
+	checkRep();
+}
 
+// The constructor by default creates a pitch in octave 4.
+Pitch::Pitch(int p, int a): pClass(p), accidental(a), octave(4)
+{
+	checkRep();
+}
+
+// A constructor taking a pitch class and an octave.
+Pitch::Pitch(int p, int a, int o): pClass(p),accidental(a),octave(o)
+{
+	checkRep();
+}
+
+// A copy constructor.
+Pitch::Pitch(const Pitch& p): pClass(p.getClass()), accidental(p.getAccidental()), octave(p.getOctave())
+{
+	checkRep();
+}
+
+// Ensures that this class is valid.
 void Pitch::checkRep() const
 {
 	if(	pClass != C &&
@@ -111,8 +95,15 @@ void Pitch::checkRep() const
 	{
 		std::cerr << "This pitch is invalid!" << std::endl;
 	}
+	if(	accidental != DOUBLE_FLAT &&
+		accidental != FLAT &&
+		accidental != NATURAL &&
+		accidental != SHARP &&
+		accidental != DOUBLE_SHARP)
+	{
+		std::cerr << "This pitch is invalid!" << std::endl;
+	}
 }
-
 
 // Adds a given Interval to a Pitch, creating a new Pitch.
 Pitch operator+(const Pitch &a, const Interval &b)

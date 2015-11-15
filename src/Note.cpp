@@ -1,25 +1,51 @@
 #include "Base.hpp"
 
+// A simple getter for pitch.
 Pitch Note::getPitch() const
 {
 	return pitch;
 }
+
+// A simple getter for length.
 Count Note::getLength() const
 {
 	return length;
 }
+
+// Is this Note a rest?
 bool Note::isRest() const
 {
 	return pitch.isRest();
 }
-std::string Note::getASCII() const
+
+// Returns a basic string representing
+// this Note (like, "C4 1/4")
+std::string Note::toString() const
 {
-	return pitch.getASCII() + length.getASCII();
+	return pitch.toString() + " " + length.toString();
 }
-std::string Note::getLilyPond() const
+
+// The default constructor.
+Note::Note(): pitch(),length()
 {
-	return pitch.getLilyPond() + length.getLilyPond();
+	checkRep();
 }
+
+// A constructor with arguments.
+Note::Note(Pitch p, Count l):	pitch(p),length(l)
+{
+	checkRep();
+}
+
+// A copy constructor.
+Note::Note(const Note& n): pitch(n.getPitch()), length(n.getLength())
+{
+	checkRep();
+}
+
+// There isn't anything we need
+// to make sure this is a valid
+// class... yet... (?)
 void Note::checkRep() const
 {
 	

@@ -26,13 +26,23 @@ int Scale::getNumDegrees() const
 {
 	return ascending.size();
 }
+std::string Scale::toString() const
+{
+	switch(scaleType)
+	{
+		case MAJOR:				return getDegree(0).toString() + " major";
+		case NATURAL_MINOR:		return getDegree(0).toString() + " natural minor";
+		case HARMONIC_MINOR:	return getDegree(0).toString() + " harmonic minor";
+		case MELODIC_MINOR:		return getDegree(0).toString() + " melodic minor";
+	}
+	return "ERROR";
+}
 Scale::Scale()
 {
 	
 }
-Scale::Scale(Pitch root, int scaleType)
+Scale::Scale(Pitch root, int st): scaleType(st)
 {
-	root = Pitch(root.getClass(),root.getAccidental(),4);
 	switch(scaleType)
 	{
 		case MAJOR:
@@ -107,11 +117,6 @@ Scale::Scale(Pitch root, int scaleType)
 			descending.push_back(root + Interval(MINOR,7));
 			break;
 	}
-	
-}
-std::string Scale::getString() const
-{
-	return "";
 }
 
 void Scale::checkRep() const

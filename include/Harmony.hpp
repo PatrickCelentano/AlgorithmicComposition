@@ -21,8 +21,7 @@ class Chord
 		int getInversion() const;				// Gets the inversion (ROOT, FIRST_INVERSION, etc)
 		int getQuality() const;					// Gets the quality of this chord (MAJOR, MINOR, etc)
 		Interval getSpan() const;				// Gets the difference between the highest and lowest Pitch.
-		std::string getASCII() const;			// Gets the ASCII representation of this chord
-		std::string getLilyPond() const;		// Gets the "LilyPond" format of this chord
+		std::string toString() const;			// Gets the ASCII representation of this chord
 		
 		Chord();								// The default constructor
 		Chord(const Pitch& p, int q);			// A constructor just taking a pitch, and quality
@@ -98,12 +97,13 @@ class Scale
 		int getNumDegrees() const;				// The total number of ascending scale degrees (usually 7)
 		
 		Scale();
-		Scale(Pitch r, int st);				// A constructor, given a root and a "scale type."
-		std::string getString() const;			// Gets the ASCII representation of this chord
+		Scale(Pitch r, int st);					// A constructor, given a root and a "scale type."
+		std::string toString() const;			// Gets the ASCII representation of this chord
 		
 		void checkRep() const;					// Ensures this class is valid
 		
 	private:
+		int scaleType;
 		std::vector<Pitch> ascending;			// All the pitches of the scale when ascending
 		std::vector<Pitch> descending;			// All the pitches of the scale when descending (still, root at 0)
 };
