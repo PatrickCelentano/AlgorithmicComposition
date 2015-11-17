@@ -1,21 +1,31 @@
 #include "Base.hpp"
 
+// A simple getter for the pitch class.
 int Pitch::getClass() const
 {
 	return (int)pClass;
 }
+
+// A simple getter for the accidental.
 int Pitch::getAccidental() const
 {
 	return (int)accidental;
 }
+
+// A simple getter for the octave.
 int Pitch::getOctave() const
 {
 	return (int)octave;
 }
+
+// Returns if this is a rest.
 bool Pitch::isRest() const
 {
 	return pClass == REST;
 }
+
+// Returns a nice ASCII string representing
+// this Pitch (ie: "C4")
 std::string Pitch::toString() const
 {
 	std::string toReturn = "";
@@ -48,6 +58,8 @@ std::string Pitch::toString() const
 	itoa(octave,buffer,10);
 	return toReturn + buffer;
 }
+
+// An assignment operator for Pitch.
 Pitch& Pitch::operator=(const Pitch &p)
 {
 	pClass = p.getClass();
@@ -336,4 +348,44 @@ Pitch operator-(const Pitch &a, const Interval &b)
 			}
 	}
 	return Pitch(newPClass,newAccidental,newOctave);
+}
+
+// A straightforward equality operator for Pitch (non-enharmonic)
+bool operator==(const Pitch &a, const Pitch &b)
+{
+	return	a.getClass() == b.getClass() &&
+			a.getAccidental() == b.getAccidental() &&
+			a.getOctave() == b.getOctave();
+}
+
+// A straightforward greater-than operator for Pitch (non-enharmonic)
+bool operator>(const Pitch &a, const Pitch &b)
+{
+	return	(a.getOctave() > b.getOctave()) ||
+			(a.getOctave() == b.getOctave() &&	a.getClass() > b.getClass()) ||
+			(a.getClass() == b.getClass() &&	a.getAccidental() > b.getAccidental());
+}
+
+// A straightforward less-than operator for Pitch (non-enharmonic)
+bool operator<(const Pitch &a, const Pitch &b)
+{
+	return	(a.getOctave() < b.getOctave()) ||
+			(a.getOctave() == b.getOctave() &&	a.getClass() < b.getClass()) ||
+			(a.getClass() == b.getClass() &&	a.getAccidental() < b.getAccidental());
+}
+
+// A straightforward greater-than-or-equal-to operator for Pitch (non-enharmonic)
+bool operator>=(const Pitch &a, const Pitch &b)
+{
+	return	(a.getOctave() >= b.getOctave()) ||
+			(a.getOctave() == b.getOctave() &&	a.getClass() >= b.getClass()) ||
+			(a.getClass() == b.getClass() &&	a.getAccidental() >= b.getAccidental());
+}
+
+// A straightforward less-than-or-equal-to operator for Pitch (non-enharmonic)
+bool operator<=(const Pitch &a, const Pitch &b)
+{
+	return	(a.getOctave() <= b.getOctave()) ||
+			(a.getOctave() == b.getOctave() &&	a.getClass() <= b.getClass()) ||
+			(a.getClass() == b.getClass() &&	a.getAccidental() <= b.getAccidental());
 }

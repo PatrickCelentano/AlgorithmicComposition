@@ -1,7 +1,10 @@
 #ifndef __DEFINES_HPP__
 #define __DEFINES_HPP__
 
-// Pitch class
+// Pitch classes
+// Note: these values are actually
+// significant, as subtraction, etc.
+// are used to speed up calculation.
 #define C 0
 #define D 1
 #define E 2
@@ -12,6 +15,9 @@
 #define REST 7
 
 // Accidentals
+// Note: these values are actually
+// significant, as subtraction, etc.
+// are used to speed up calculation.
 #define DOUBLE_FLAT (-2)
 #define FLAT (-1)
 #define NATURAL 0
@@ -19,6 +25,9 @@
 #define DOUBLE_SHARP 2
 
 // Qualities
+// Note: these values are actually
+// significant, as subtraction, etc.
+// are used to speed up calculation.
 #define DIMINISHED (-2)
 #define MINOR (-1)
 #define PERFECT 0
@@ -26,6 +35,9 @@
 #define AUGMENTED 2
 
 // Scale Degrees
+// Note: these values are actually
+// significant, as subtraction, etc.
+// are used to speed up calculation.
 #define TONIC 1
 #define SUPERTONIC 2
 #define MEDIANT 3
@@ -35,6 +47,10 @@
 #define LEADING_TONE 7
 
 // Scale Types
+// Note: these values are mostly
+// arbitrary, though some have
+// been cleverly chosen to over-
+// lap with keywords like MAJOR
 #define IONIAN 1
 #define DORIAN 2
 #define PHRYGIAN 3
@@ -46,6 +62,7 @@
 #define HARMONIC_MINOR 8
 #define MELODIC_MINOR 9
 
+// Defined classes
 class Pitch;
 class Interval;
 class Scale;

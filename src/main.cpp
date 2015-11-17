@@ -1,30 +1,73 @@
 #include "Base.hpp"
-#include "Line.hpp"
+#include "Form.hpp"
 #include "Harmony.hpp"
 #include "Defines.hpp"
-#include <iostream>
+#include "Composer.hpp"
+#include "MarkovChain.hpp"
+#include "OutcomeSet.hpp"
+
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
-void intervalsTest();
-void scaleTest();
-
 int main()
 {
+	srand(time(NULL));
+	Composer::writeSimpleMelody(rand());
 	return 0;
 }
+
+
+
+
+
 /*
-	Line melody;
+	srand(time(NULL));
+	
+	Line melody1;
+	Line melody2;
+	
 	Scale scale(Pitch(C,NATURAL,4),MAJOR);
-	for(int i = scale.getNumDegrees()+10; i > 0; i--)
+	melody1.addNote(Note(scale.getDegree(1),Count(1,4)));
+	int curDegree = 1;
+	
+	for(int i = 0; i < 20; i++)
 	{
-		melody.addNote(Note(scale.getDegree(i),Count(1,4)));
+		melody1.addNote(Note(scale.getDegree(curDegree),Count(1,4)));
+		curDegree = curDegree + rand()%5 - 3;
 	}
+	
+	for(int i = 0; i < 20; i++)
+	{
+		melody2.addNote(Note(melody1.getNote(i).getPitch()-Interval(MAJOR,3),Count(1,4)));
+	}
+	
+	Composer::writeToLilyPond(melody2,melody1);
+	
+	OutcomeSet<Pitch> outcomes;
+	outcomes.addOutcome(Pitch(C,NATURAL,4),2);
+	outcomes.addOutcome(Pitch(B,NATURAL,4),5);
+	outcomes.addOutcome(Pitch(A,NATURAL,4),3);
+	
+	for(unsigned int i = 0; i < 20; i++)
+	{
+		for(unsigned int i = 0; i < 5; i++)
+		{
+			std::cout << outcomes.getOutcome(rand()).toString() << " ";
+		}
+		std::cout << std::endl;
+	}
+	*/
+
+/*
+
+void intervalsTest();
+void scaleTest();
+*/
+/*
+	
 	cout << std::endl;
-	for(int i = 1; i < 9; i++)
-	{
-		std::cout << melody.getNote(i).getPitch().getASCII() << " ";
-	}
 	*/
 /*
 void intervalsTest()

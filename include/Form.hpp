@@ -1,5 +1,5 @@
-#ifndef __LINE_HPP__
-#define __LINE_HPP__
+#ifndef __FORM_HPP__
+#define __FORM_HPP__
 
 #include <string>
 #include <cstdlib>
@@ -17,10 +17,11 @@
 class Line
 {
 	public:
-		void addNote(Note n);				// Adds a given note to the end of the line.
-		Note getNote(int i) const;			// Gets the i-th note in this line.
+		void add(Note n);					// Adds a given note to the end of the line.
+		Note get(int i) const;				// Gets the i-th note in this line.
 		int getRestoringForce() const;		// Gets the desire of this line to move in a given direction.
 		Count getLength() const;
+		std::string toLilyPond() const;		// Gets a string of the LilyPond representation of this Line.
 		
 		/*
 		Melody getWithNewPitches(Rhythm r)

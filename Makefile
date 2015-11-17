@@ -59,6 +59,9 @@ $(DEP_DIR) :
 run : $(EXECUTABLE)
 	@echo Running MxM!
 	@$(EXECUTABLE)
+	@lilypond --pdf -o test test.ly
+	cmd /C "test.pdf"
+	cmd /C "test.mid"
 
 # Clean target
 clean:

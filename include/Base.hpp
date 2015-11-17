@@ -15,35 +15,42 @@
 class Interval
 {
 	public:
-		int getQuality() const;			// Gets the quality of this Interval
-		int getNumber() const;			// Gets the number of this Interval
-		int getOctaves() const;			// Gets the number of octaves in this interval
-		std::string toString() const;	// Gets the ASCII string for this pitch
+		int getQuality() const;						// Gets the quality of this Interval
+		int getNumber() const;						// Gets the number of this Interval
+		int getOctaves() const;						// Gets the number of octaves in this interval
+		std::string toString() const;				// Gets the ASCII string for this pitch
 		
-		Interval& operator=(const Interval &a);
+		Interval& operator=(const Interval &a);		// The assignment operator.
 		
-		void checkRep() const;			// Ensures this class is valid
 		
-		Interval():						// The default constructor
-			quality(0), number(1)
+		Interval(): quality(0), number(1)			// The default constructor
 			{ checkRep(); }
-		Interval(int q, int n):			// A constructor that takes only number and quality
-			quality(q), number(n)
+		Interval(int q, int n):quality(q),number(n) // A constructor that takes only number and quality
 			{ checkRep(); }
-		Interval(int q, int n, int o):	// A constructor that also takes octaves
+		Interval(int q, int n, int o):				// A constructor that also takes octaves
 			quality(q), number(n + o*7)
 			{ checkRep(); }
 		
 	private:
+		void checkRep() const;			// Ensures this class is valid
+		
 		int8_t quality;		// The quality of the interval
 		int8_t number;		// The number (ie: sixth, third)
 };
+
+// Comparison operations
 Interval operator+(const Interval &a, const Interval &b);
 Interval operator-(const Interval &a, const Interval &b);
 Interval operator+=(const Interval &a, const Interval &b);
 Interval operator-=(const Interval &a, const Interval &b);
 Interval operator-(const Pitch &a, const Pitch &b);
+
+// Comparison operations
 bool operator==(const Interval &a, const Interval &b);
+bool operator>(const Interval &a, const Interval &b);
+bool operator<(const Interval &a, const Interval &b);
+bool operator>=(const Interval &a, const Interval &b);
+bool operator<=(const Interval &a, const Interval &b);
 
 
 ////////////////////////////////////////////////
@@ -73,11 +80,19 @@ class Pitch
 		int8_t accidental;	// Is this pitch sharp/flat/etc
 		int8_t octave;		// The octave of this Pitch
 };
+
+// Interval operations
 Pitch operator+(const Pitch &a, const Interval &b);
 Pitch operator-(const Pitch &a, const Interval &b);
 Pitch operator+=(const Pitch &a, const Interval &b);
 Pitch operator-=(const Pitch &a, const Interval &b);
+
+// Comparison operations
 bool operator==(const Pitch &a, const Pitch &b);
+bool operator>(const Pitch &a, const Pitch &b);
+bool operator<(const Pitch &a, const Pitch &b);
+bool operator>=(const Pitch &a, const Pitch &b);
+bool operator<=(const Pitch &a, const Pitch &b);
 
 
 ////////////////////////////////////////////////
@@ -100,7 +115,7 @@ class Count
 		Count(const Count& c);				// The copy constructor
 
 	private:
-		void checkRep() const;	// Ensures this class is valid
+		void checkRep() const;				// Ensures this class is valid
 		
 		int beat;				// The number of the given subdivision (the "and" of 1)
 		int subdivision;		// The subdivision (quarters, triplets, etc.)
@@ -137,16 +152,30 @@ class Note
 		Count getLength() const;			// Gets the length of this Note in Counts
 		bool isRest() const;				// Gets if this "Note" is actually a rest
 		std::string toString() const;		// Gets the ASCII representation of this Note
+		Note& operator=(const Note &a);		// An asignment operator.
 		
 		Note();								// Default constructor
 		Note(Pitch p, Count l);				// Constructor with arguments
 		Note(const Note& n);				// Copy constructor
 
 	private:
-		void checkRep() const;	// Ensures this class is valid
+		void checkRep() const;				// Ensures this class is valid
 		
 		Pitch pitch;			// The pitch of this Note (or rest)
 		Count length;			// The length of this Note (or rest)
 };
+
+// Interval operations
+Note operator+(const Note &a, const Interval &b);
+Note operator-(const Note &a, const Interval &b);
+Note operator+=(const Note &a, const Interval &b);
+Note operator-=(const Note &a, const Interval &b);
+
+// These operators allow augmentation/diminution
+Note operator*(const Note &a, int scalar);
+Note operator/(const Note &a, int scalar);
+
+// Comparison operations
+bool operator==(const Note &a, const Note &b);
 
 #endif

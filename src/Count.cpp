@@ -96,61 +96,83 @@ void Count::checkRep() const
 		std::cerr << "This count is invalid!" << std::endl;
 }
 
-// A variety of operators
+// Adds two Counts together, creating a new Count
 Count operator+(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() +
 					b.getBeat()*a.getSubdivision(),
 					a.getSubdivision()*b.getSubdivision());
 }
+
+// Subtracts two Counts, creating a new Count
 Count operator-(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() -
 					b.getBeat()*a.getSubdivision(),
 					a.getSubdivision()*b.getSubdivision());
 }
+
+// Adds two Counts together, creating a new Count
 Count operator+=(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() +
 					b.getBeat()*a.getSubdivision(),
 					a.getSubdivision()*b.getSubdivision());
 }
+
+// Subtracts two Counts, creating a new Count
 Count operator-=(const Count &a, const Count &b)
 {
 	return Count(	a.getBeat()*b.getSubdivision() -
 					b.getBeat()*a.getSubdivision(),
 					a.getSubdivision()*b.getSubdivision());
 }
+
+// Augmentation
 Count operator*(const Count &a, int scalar)
 {
 	return Count(	a.getBeat()*scalar, a.getSubdivision());
 }
+
+// Diminution
 Count operator/(const Count &a, int scalar)
 {
 	return Count(	a.getBeat(), a.getSubdivision()*scalar);
 }
+
+// A straightforward equality operator for Count
 bool operator==(const Count &a, const Count &b)
 {
 	return(	a.getBeat() == b.getBeat() &&
 			a.getSubdivision() == b.getSubdivision() );
 }
+
+// A straightforward greater-than operator for Count
 bool operator>(const Count &a, const Count &b)
 {
 	return( (float)a.getBeat()/a.getSubdivision() >
 			(float)b.getBeat()/b.getSubdivision() );
 }
+
+// A straightforward les-than operator for Count
 bool operator<(const Count &a, const Count &b)
 {
 	return( (float)a.getBeat()/a.getSubdivision() <
 			(float)b.getBeat()/b.getSubdivision() );
 }
+
+// A straightforward greater-than-or-equal operator for Count
 bool operator>=(const Count &a, const Count &b)
 {
-	return(	(float)a.getBeat()/a.getSubdivision() >=
-			(float)b.getBeat()/b.getSubdivision() );
+	return(	(float)a.getBeat()/a.getSubdivision() >
+			(float)b.getBeat()/b.getSubdivision() ) ||
+			a == b;
 }
+
+// A straightforward less-than-or-equal operator for Count
 bool operator<=(const Count &a, const Count &b)
 {
 	return( (float)a.getBeat()/a.getSubdivision() <=
-			(float)b.getBeat()/b.getSubdivision() );
+			(float)b.getBeat()/b.getSubdivision() ) ||
+			a == b;
 }

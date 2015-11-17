@@ -1,5 +1,7 @@
 #include "Base.hpp"
 
+// A simple getter for the quality
+// of the Interval (MAJOR, MINOR, etc.)
 int Interval::getQuality() const
 {
 	return quality;
@@ -161,4 +163,44 @@ Interval operator-(const Pitch &a, const Pitch &b)
 			break;
 	}
 	return Interval(newQuality,newNumber,newOctaves);
+}
+
+// A straightforward equality operator for Interval (non-enharmonic)
+bool operator==(const Interval &a, const Interval &b)
+{
+	return	a.getNumber() == b.getNumber() &&
+			a.getOctaves() == b.getOctaves() &&
+			a.getQuality() == b.getQuality();
+}
+
+// A straightforward greater-than operator for Interval (non-enharmonic)
+bool operator>(const Interval &a, const Interval &b)
+{
+	return	(a.getOctaves() > b.getOctaves()) ||
+			(a.getOctaves() == b.getOctaves() &&	a.getNumber() > b.getNumber()) ||
+			(a.getNumber() == b.getNumber() &&		a.getQuality() > b.getQuality());
+}
+
+// A straightforward less-than operator for Interval (non-enharmonic)
+bool operator<(const Interval &a, const Interval &b)
+{
+	return	(a.getOctaves() < b.getOctaves()) ||
+			(a.getOctaves() == b.getOctaves() &&	a.getNumber() < b.getNumber()) ||
+			(a.getNumber() == b.getNumber() &&		a.getQuality() < b.getQuality());
+}
+
+// A straightforward greater-than-or-equal-to operator for Interval (non-enharmonic)
+bool operator>=(const Interval &a, const Interval &b)
+{
+	return	(a.getOctaves() >= b.getOctaves()) ||
+			(a.getOctaves() == b.getOctaves() &&	a.getNumber() >= b.getNumber()) ||
+			(a.getNumber() == b.getNumber() &&		a.getQuality() >= b.getQuality());
+}
+
+// A straightforward less-than-or-equal-to operator for Interval (non-enharmonic)
+bool operator<=(const Interval &a, const Interval &b)
+{
+	return	(a.getOctaves() <= b.getOctaves()) ||
+			(a.getOctaves() == b.getOctaves() &&	a.getNumber() <= b.getNumber()) ||
+			(a.getNumber() == b.getNumber() &&		a.getQuality() <= b.getQuality());
 }
