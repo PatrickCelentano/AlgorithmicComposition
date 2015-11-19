@@ -34,24 +34,6 @@ Note& Note::operator=(const Note &a)
 	return *this;
 }
 
-// The default constructor.
-Note::Note(): pitch(),length()
-{
-	checkRep();
-}
-
-// A constructor with arguments.
-Note::Note(Pitch p, Count l):	pitch(p),length(l)
-{
-	checkRep();
-}
-
-// A copy constructor.
-Note::Note(const Note& n): pitch(n.getPitch()), length(n.getLength())
-{
-	checkRep();
-}
-
 // There isn't anything we need
 // to make sure this is a valid
 // class... yet... (?)

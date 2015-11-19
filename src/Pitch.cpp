@@ -70,13 +70,13 @@ Pitch& Pitch::operator=(const Pitch &p)
 }
 
 // The default constructor creates a C4.
-Pitch::Pitch(): pClass(C), accidental(NATURAL), octave(4)
+Pitch::Pitch(): pClass(C), accidental(NATURAL), octave(DEFAULT_OCTAVE)
 {
 	checkRep();
 }
 
-// The constructor by default creates a pitch in octave 4.
-Pitch::Pitch(int p, int a): pClass(p), accidental(a), octave(4)
+// The constructor by default creates a pitch in the DEFAULT_OCTAVE.
+Pitch::Pitch(int p, int a): pClass(p), accidental(a), octave(DEFAULT_OCTAVE)
 {
 	checkRep();
 }
@@ -105,7 +105,7 @@ void Pitch::checkRep() const
 		pClass != B &&
 		pClass != REST)
 	{
-		std::cerr << "This pitch is invalid!" << std::endl;
+		std::cerr << "Error: Pitch: Improper pitch class!" << std::endl;
 	}
 	if(	accidental != DOUBLE_FLAT &&
 		accidental != FLAT &&
@@ -113,7 +113,11 @@ void Pitch::checkRep() const
 		accidental != SHARP &&
 		accidental != DOUBLE_SHARP)
 	{
-		std::cerr << "This pitch is invalid!" << std::endl;
+		std::cerr << "Error: Pitch: Improper accidental!" << std::endl;
+	}
+	if( octave > HIGHEST_OCTAVE || octave < LOWEST_OCTAVE)
+	{
+		std::cerr << "Error: Pitch: Improper octave!" << std::endl;
 	}
 }
 
@@ -129,7 +133,7 @@ Pitch operator+(const Pitch &a, const Interval &b)
 	// Minus one because adding six would mess with octave logic 
 	int newPClass		= (a.getClass()+b.getNumber()+6)%7;
 	int newAccidental	= a.getAccidental();
-	int newOctave		= (a.getClass()+b.getNumber()-7)/7 + a.getOctave() + b.getOctaves();
+	int newOctave		= (a.getClass()+b.getNumber()+6)/7 + a.getOctave() + b.getOctaves()-1;
 	
 	switch(b.getNumber())
 	{
@@ -246,7 +250,7 @@ Pitch operator-(const Pitch &a, const Interval &b)
 	// Minus one because adding six would mess with octave logic 
 	int newPClass		= (a.getClass()+8-b.getNumber())%7;
 	int newAccidental	= a.getAccidental();
-	int newOctave		= (a.getClass()-5-b.getNumber())/7 + a.getOctave() - b.getOctaves();
+	int newOctave		= (a.getClass()+b.getNumber()+6)/7 + a.getOctave() + b.getOctaves()-1;
 	
 	switch(b.getNumber())
 	{

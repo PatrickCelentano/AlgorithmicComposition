@@ -14,7 +14,74 @@ using namespace std;
 int main()
 {
 	srand(time(NULL));
-	Composer::writeSimpleMelody(rand());
+	Line line;
+	Progression progression;
+	Scale scale(Pitch(C,NATURAL,4),HARMONIC_MINOR);
+	Key key(Pitch(C,NATURAL,4),HARMONIC_MINOR);
+	
+	std::vector<vector<int>*> progs;
+	
+	vector<int>* one = new vector<int>;
+	vector<int>* two = new vector<int>;
+	vector<int>* three = new vector<int>;
+	vector<int>* four = new vector<int>;
+	vector<int>* five = new vector<int>;
+	vector<int>* six = new vector<int>;
+	vector<int>* seven = new vector<int>;
+	
+	one->push_back(4);
+	one->push_back(5);
+	one->push_back(7);
+	two->push_back(6);
+	two->push_back(4);
+	two->push_back(6);
+	three->push_back(6);
+	three->push_back(4);
+	four->push_back(5);
+	four->push_back(1);
+	four->push_back(2);
+	five->push_back(6);
+	six->push_back(2);
+	six->push_back(5);
+	six->push_back(3);
+	six->push_back(4);
+	seven->push_back(1);
+	seven->push_back(3);
+	seven->push_back(6);
+	
+	progs.push_back(one);
+	progs.push_back(two);
+	progs.push_back(three);
+	progs.push_back(four);
+	progs.push_back(five);
+	progs.push_back(six);
+	progs.push_back(seven);
+	
+	/*
+	for(int i = 0; i < 7; i++)
+	{
+		std::cout << i << ": ";
+		vector<int> possible = *progs[i];
+		std::cout << possible.size() << std::endl;
+	}
+	*/
+	
+	int degree = 0;
+	for(unsigned int i = 1; i < 30; i++)
+	{
+		vector<int> possible = *progs[degree];
+		int chosen = rand()%possible.size();
+		int nextDegree = possible[chosen]-1;
+		
+		line.add(Note(scale.getDegree(degree),					Count(1,8)));
+		line.add(Note(scale.getDegree((degree+nextDegree)/2),	Count(1,8)));
+		
+		progression.add(Chord(key.getFunction(degree)-Interval(PERFECT,8),Count(1,4)));
+		
+		degree = nextDegree;
+	}
+	//Composer::writeSimpleMelody(rand());
+	Composer::writeToLilyPond(line,progression);
 	return 0;
 }
 
@@ -22,6 +89,42 @@ int main()
 
 
 
+
+
+
+
+
+/*
+	Scale scale(Pitch(C,NATURAL,4),MAJOR);
+	
+	for(unsigned int i = 1; i < 20; i++)
+	{
+		std::cout << (scale.getDegree(i) - scale.getDegree(1)).toString() << std::endl;
+	}
+	Composer::writeSimpleMelody(rand());
+*/
+/*
+Pitch root(C,NATURAL,4);
+	Pitch third(E,NATURAL,4);
+	Pitch fifth(G,NATURAL,4);
+	Pitch seventh(B,NATURAL,3);
+	
+	vector<Pitch> pitches;
+	pitches.push_back(root);
+	
+	pitches.push_back(third);
+	pitches.push_back(fifth);
+	pitches.push_back(seventh);
+	
+	for(unsigned int i = 0; i < pitches.size(); i++)
+	{
+		for(unsigned int j = 0; j < pitches.size(); j++)
+		{
+			Interval interval = (Pitch)pitches[j] - (Pitch)pitches[i];
+			std::cout << pitches[j].toString() << " - " << pitches[i].toString() << " = " << interval.toString() << std::endl;
+		}
+	}
+*/
 /*
 	srand(time(NULL));
 	
@@ -100,7 +203,7 @@ void intervalsTest()
 			Interval interval1 = intervals[j];
 			Pitch pitch = pitches[i] + interval1;
 			Interval interval2 = pitch - pitches[i];
-			std::cout << pitches[i].getASCII() << " to " << pitch.getASCII() << ":\t" << interval1.getASCII() << "\tvs. " << interval2.getASCII() << std::endl;
+			std::cout << pitches[i]toString() << " to " << pitchtoString() << ":\t" << interval1toString() << "\tvs. " << interval2toString() << std::endl;
 		}
 		std::cout << std::endl;
 	}
@@ -126,7 +229,7 @@ void scaleTest()
 		if(i == "9") newDeg = 9;
 		if(i == "0") newDeg = 10;
 		Pitch pitch = scale.getDegree(newDeg,lastDeg);
-		std::cout << pitch.getASCII() << std::endl;
+		std::cout << pitchtoString() << std::endl;
 	}
 }
 */
@@ -150,7 +253,7 @@ void scaleTest()
 	
 	Interval P5;
 	P5 = m3 + M3;
-	cout << P5.getASCII() << endl;
+	cout << P5toString() << endl;
 	*/
 	
 	/*
@@ -171,31 +274,12 @@ void scaleTest()
 		for(unsigned int j = 0; j < pitches.size(); j++)
 		{
 			Interval interval = (Pitch)pitches[j] - (Pitch)pitches[i];
-			std::cout << pitches[j].getASCII() << " - " << pitches[i].getASCII() << " = " << interval.getASCII() << std::endl;
+			std::cout << pitches[j]toString() << " - " << pitches[i]toString() << " = " << intervaltoString() << std::endl;
 		}
 	}
 	*/
 	/*
-	Pitch root(C,NATURAL,4);
-	Pitch third(E,NATURAL,4);
-	Pitch fifth(G,NATURAL,4);
-	Pitch seventh(B,NATURAL,3);
-	
-	vector<Pitch> pitches;
-	pitches.push_back(root);
-	
-	pitches.push_back(third);
-	pitches.push_back(fifth);
-	pitches.push_back(seventh);
-	
-	for(unsigned int i = 0; i < pitches.size(); i++)
-	{
-		for(unsigned int j = 0; j < pitches.size(); j++)
-		{
-			Interval interval = (Pitch)pitches[j] - (Pitch)pitches[i];
-			std::cout << pitches[j].getASCII() << " - " << pitches[i].getASCII() << " = " << interval.getASCII() << std::endl;
-		}
-	}*/
+	*/
 	/*
 	vector<Pitch> scale;
 	scale.push_back(Pitch(C,SHARP,4));
@@ -256,7 +340,7 @@ void scaleTest()
 		if((i-1)%5 == 0)
 			std::cout << std::endl;
 		Interval interval = (Pitch)scale[i] - (Pitch)scale[i-1];
-		std::cout << scale[i].getASCII() << "\t- " << scale[i-1].getASCII() << " = " << interval.getASCII() << std::endl;
+		std::cout << scale[i]toString() << "\t- " << scale[i-1]toString() << " = " << intervaltoString() << std::endl;
 	}
 	*/
 	
@@ -265,66 +349,66 @@ void scaleTest()
 	//Count b = Count(1,2);
 
 	/*
-	cout << b.getASCII() << endl;
-	cout << (b/3+b/2).getASCII() << endl;
+	cout << btoString() << endl;
+	cout << (b/3+b/2)toString() << endl;
 	*/
 	
 	//Scale s(C,MAJOR);
 	//Key k(C,MAJOR);
 	
 	
-	//cout << a.getASCII() << endl << endl;
+	//cout << atoString() << endl << endl;
 	
 	/*
-	// cout << "Plus " << Interval(PERFECT,1).getASCII() << endl;
-	cout << (a+Interval(PERFECT,1)).getASCII() << endl;
+	// cout << "Plus " << Interval(PERFECT,1)toString() << endl;
+	cout << (a+Interval(PERFECT,1))toString() << endl;
 	
-	// cout << "Plus " << Interval(MAJOR,2).getASCII() << endl;
-	cout << (a+Interval(MAJOR,2)).getASCII() << endl;
+	// cout << "Plus " << Interval(MAJOR,2)toString() << endl;
+	cout << (a+Interval(MAJOR,2))toString() << endl;
 	
-	// cout << "Plus " << Interval(MAJOR,3).getASCII() << endl;
-	cout << (a+Interval(MAJOR,3)).getASCII() << endl;
+	// cout << "Plus " << Interval(MAJOR,3)toString() << endl;
+	cout << (a+Interval(MAJOR,3))toString() << endl;
 	
-	// cout << "Plus " << Interval(PERFECT,4).getASCII() << endl;
-	cout << (a+Interval(PERFECT,4)).getASCII() << endl;
+	// cout << "Plus " << Interval(PERFECT,4)toString() << endl;
+	cout << (a+Interval(PERFECT,4))toString() << endl;
 	
-	// cout << "Plus " << Interval(PERFECT,5).getASCII() << endl;
-	cout << (a+Interval(PERFECT,5)).getASCII() << endl;
+	// cout << "Plus " << Interval(PERFECT,5)toString() << endl;
+	cout << (a+Interval(PERFECT,5))toString() << endl;
 	
-	// cout << "Plus " << Interval(MAJOR,6).getASCII() << endl;
-	cout << (a+Interval(MAJOR,6)).getASCII() << endl;
+	// cout << "Plus " << Interval(MAJOR,6)toString() << endl;
+	cout << (a+Interval(MAJOR,6))toString() << endl;
 	
-	// cout << "Plus " << Interval(MAJOR,7).getASCII() << endl;
-	cout << (a+Interval(MAJOR,7)).getASCII() << endl;
+	// cout << "Plus " << Interval(MAJOR,7)toString() << endl;
+	cout << (a+Interval(MAJOR,7))toString() << endl;
 	
-	// cout << "Plus " << Interval(PERFECT,8).getASCII() << endl;
-	cout << (a+Interval(PERFECT,8)).getASCII() << endl;
+	// cout << "Plus " << Interval(PERFECT,8)toString() << endl;
+	cout << (a+Interval(PERFECT,8))toString() << endl;
 	*/
 
 	/*
-	// cout << "Minus " << Interval(PERFECT,1).getASCII() << endl;
-	cout << (a-Interval(PERFECT,1)).getASCII() << endl;
+	// cout << "Minus " << Interval(PERFECT,1)toString() << endl;
+	cout << (a-Interval(PERFECT,1))toString() << endl;
 	
-	// cout << "Minus " << Interval(MINOR,2).getASCII() << endl;
-	cout << (a-Interval(MINOR,2)).getASCII() << endl;
+	// cout << "Minus " << Interval(MINOR,2)toString() << endl;
+	cout << (a-Interval(MINOR,2))toString() << endl;
 	
-	// cout << "Minus " << Interval(MINOR,3).getASCII() << endl;
-	cout << (a-Interval(MINOR,3)).getASCII() << endl;
+	// cout << "Minus " << Interval(MINOR,3)toString() << endl;
+	cout << (a-Interval(MINOR,3))toString() << endl;
 	
-	// cout << "Minus " << Interval(PERFECT,4).getASCII() << endl;
-	cout << (a-Interval(PERFECT,4)).getASCII() << endl;
+	// cout << "Minus " << Interval(PERFECT,4)toString() << endl;
+	cout << (a-Interval(PERFECT,4))toString() << endl;
 	
-	// cout << "Minus " << Interval(PERFECT,5).getASCII() << endl;
-	cout << (a-Interval(PERFECT,5)).getASCII() << endl;
+	// cout << "Minus " << Interval(PERFECT,5)toString() << endl;
+	cout << (a-Interval(PERFECT,5))toString() << endl;
 	
-	// cout << "Minus " << Interval(MINOR,6).getASCII() << endl;
-	cout << (a-Interval(MINOR,6)).getASCII() << endl;
+	// cout << "Minus " << Interval(MINOR,6)toString() << endl;
+	cout << (a-Interval(MINOR,6))toString() << endl;
 	
-	// cout << "Minus " << Interval(MINOR,7).getASCII() << endl;
-	cout << (a-Interval(MINOR,7)).getASCII() << endl;
+	// cout << "Minus " << Interval(MINOR,7)toString() << endl;
+	cout << (a-Interval(MINOR,7))toString() << endl;
 	
-	// cout << "Minus " << Interval(PERFECT,8).getASCII() << endl;
-	cout << (a-Interval(PERFECT,8)).getASCII() << endl;
+	// cout << "Minus " << Interval(PERFECT,8)toString() << endl;
+	cout << (a-Interval(PERFECT,8))toString() << endl;
 	*/
 	/*
 	vector<Pitch> pitches;
@@ -355,7 +439,7 @@ void scaleTest()
 			Interval interval1 = intervals[j];
 			Pitch pitch = pitches[i] + interval1;
 			Interval interval2 = pitch - pitches[i];
-			std::cout << pitches[i].getASCII() << " to " << pitch.getASCII() << ":\t" << interval1.getASCII() << "\tvs. " << interval2.getASCII() << std::endl;
+			std::cout << pitches[i]toString() << " to " << pitchtoString() << ":\t" << interval1toString() << "\tvs. " << interval2toString() << std::endl;
 		}
 		std::cout << std::endl;
 	}

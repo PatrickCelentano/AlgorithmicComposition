@@ -34,6 +34,13 @@
 #define MAJOR 1
 #define AUGMENTED 2
 
+// Chord types
+// Note: these values are actually
+// significant, as subtraction, etc.
+// are used to speed up calculation.
+#define DRONE 4
+#define POWER 5
+
 // Scale Degrees
 // Note: these values are actually
 // significant, as subtraction, etc.
@@ -61,6 +68,25 @@
 #define LOCRIAN 7
 #define HARMONIC_MINOR 8
 #define MELODIC_MINOR 9
+#define DOUBLE_HARMONIC 10
+
+// Scale Degrees
+// Note: these values are actually
+// significant, and represent octaves
+// that have some significance
+#define LOWEST_OCTAVE -1
+#define DEFAULT_OCTAVE 4
+#define HIGHEST_OCTAVE 9
+
+
+// Inversions
+// Note: these values are actually
+// significant, and represent octaves
+// that have some significance
+#define ROOT_POSITION 0
+#define FIRST_INVERSION 1
+#define SECOND_INVERSION 2
+#define THIRD_INVERSION 3
 
 // Defined classes
 class Pitch;

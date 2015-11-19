@@ -44,9 +44,42 @@ class Composer
 			file << "				" << line1.toLilyPond() << "\n";
 			file << "			}\n";
 			file << "			\\new Staff = \"lower\"\n";
-			file << "			\\absolute{\n";
+			//file << "			\\absolute{\n";
 			file << "				\\clef bass\n";
 			file << "				" << line2.toLilyPond() << "\n";
+			file << "			}\n";
+			file << "		>>\n";
+			file << "	>>\n";
+			file << "	\\midi{ }\n";
+			file << "	\\layout{ }\n";
+			file << "}\n";
+			
+			file.close();
+		}
+		static void writeToLilyPond(Line line,Progression progression)
+		{
+			// The file we're writing to.
+			std::ofstream file;
+			file.open("test.ly");
+			
+			file << "\\version \"2.16.0\" \n\n";
+			file << "\\header{\n";
+			file << "	title = \"Title here\"\n";
+			file <<	"	subtitle = \"Subtitle here\"\n";
+			file << "} \n\n";
+			
+			file << "\\score{\n";
+			file << "	<<\n";
+			file << "		\\new PianoStaff = \"piano\" <<\n";
+			file << "			\\new Staff = \"upper\"\n";
+			file << "			\\absolute{\n";
+			file << "				\\clef treble\n";
+			file << "				" << line.toLilyPond() << "\n";
+			file << "			}\n";
+			file << "			\\new Staff = \"lower\"\n";
+			file << "			\\absolute{\n";
+			file << "				\\clef bass\n";
+			file << "				" << progression.toLilyPond() << "\n";
 			file << "			}\n";
 			file << "		>>\n";
 			file << "	>>\n";

@@ -1,50 +1,89 @@
 #include "Harmony.hpp"
+
+// A simple getter for Sonority.
+Sonority Chord::getSonority() const
+{
+	return sonority;
+}
+
+// A simple getter for length.
+Count Chord::getLength() const
+{
+	return length;
+}
+
+// Is this Chord a rest?
+bool Chord::isRest() const
+{
+	return sonority.isRest();
+}
+
+// Returns a basic string representing
+// this Chord (like, "C4M 1/4")
+std::string Chord::toString() const
+{
+	return sonority.toString() + " " + length.toString();
+}
+
+// An asignment operator.
+Chord& Chord::operator=(const Chord &a)
+{
+	sonority = a.getSonority();
+	length = a.getLength();
+	checkRep();
+	return *this;
+}
+
+// There isn't anything we need
+// to make sure this is a valid
+// class... yet... (?)
+void Chord::checkRep() const
+{
+	
+}
+
+// Adds a given interval to a Chord
+Chord operator+(const Chord &a, const Interval &b)
+{
+	return Chord(a.getSonority()+b,a.getLength());
+}
+
+// Subtracts a given interval from a Chord
+Chord operator-(const Chord &a, const Interval &b)
+{
+	return Chord(a.getSonority()-b,a.getLength());
+}
+
+
 /*
-Pitch getRoot() const;					// Gets the root note of this chord.
-int getInversion() const;				// Gets the inversion (ROOT, FIRST_INVERSION, etc)
-int getQuality() const;					// Gets the quality of this chord (MAJOR, MINOR, etc)
-Interval getSpan() const;				// Gets the difference between the highest and lowest Pitch.
-std::string getASCII() const;			// Gets the ASCII representation of this chord
-std::string getLilyPond() const;		// Gets the "LilyPond" format of this chord
+// Adds a given interval to a Chord
+Chord operator+=(const Chord &a, const Interval &b)
+{
+	return Chord(a.getSonority()+b,a.getLength());
+}
 
-Chord();								// The default constructor
-Chord(const Pitch& p, int q);			// A constructor just taking a pitch, and quality
-Chord(const Pitch& p, int q, int i);	// A constructor taking pitch, quality, and inversion
-Chord(const Pitch p[]);					// A constructor taking pitches directly.
+// Subtracts a given interval from a Chord
+Chord operator-=(const Chord &a, const Interval &b)
+{
+	return Chord(a.getSonority()-b,a.getLength());
+}
 
-void checkRep() const;					// Ensures this class is valid
+// Augmentation
+Chord operator*(const Chord &a, int scalar)
+{
+	return Chord(a.getSonority(),a.getLength()*scalar);
+}
 
-private:
-const int numPitches;					// The number of independent pitches in this chord
-const Pitch pitches[];					// All pitches in the chord, stored 1st-3rd-5th (regardless of inversion)
-const Pitch bass;						// Stores the lowest pitch in the chord, for easy access
-const Pitch soprano;					// Stores the highest pitch in the chord, for easy access
+// Diminution
+Chord operator/(const Chord &a, int scalar)
+{
+	return Chord(a.getSonority(),a.getLength()/scalar);
+}
+
+// A straightforward equality operator for Chord
+bool operator==(const Chord &a, const Chord &b)
+{
+	return	a.getSonority() == b.getSonority() &&
+			a.getLength() == b.getLength();
+}
 */
-/*
-Chord::Chord()
-{
-	
-}
-
-Chord::Chord()
-{
-	
-}
-
-Chord::Chord()
-{
-	
-}
-
-Chord::Chord(std::vector<Pitch> p)
-{
-	// We can't trust that these
-	// are in any sort of order when
-	// we get them, so we have to
-	// look at the relationships
-	// between notes and look for
-	// a root.
-	
-	// Start by c
-	pitches = p;
-}*/

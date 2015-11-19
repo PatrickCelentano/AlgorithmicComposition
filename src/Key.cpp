@@ -1,46 +1,20 @@
 #include "Harmony.hpp"
-/*
-Pitch Key::getDegree() const
+
+Pitch Key::getDegree(int d) const
 {
-	return pitch;
-}
-Pitch Key::getDegree(int octave) const
-{
-	return pitch;
+	return scale.getDegree(d);
 }
 
-
-
-
-
-Pitch 
-
-
-
-
-
-
-
-
-
-Count Key::getLength() const
+Sonority Key::getFunction(int d) const
 {
-	return length;
+	Sonority function;
+	int chordType;
+	//Hack-y way
+	//if(getDegree(d+2) - getDegree(d) == Interval(MAJOR,3))
+	if(getDegree(d+2) - getDegree(d) == Interval(MAJOR,3))
+		chordType = MAJOR;
+	else
+		chordType = MINOR;
+	function = Sonority(getDegree(d),chordType);
+	return function;
 }
-bool Key::isRest() const
-{
-	return pitch.isRest();
-}
-std::string Note::getASCII() const
-{
-	return pitch.getASCII() + length.getASCII();
-}
-std::string Note::getLilyPond() const
-{
-	return pitch.getLilyPond() + length.getLilyPond();
-}
-void Note::checkRep() const
-{
-	
-}
-*/

@@ -18,24 +18,27 @@ class Interval
 		int getQuality() const;						// Gets the quality of this Interval
 		int getNumber() const;						// Gets the number of this Interval
 		int getOctaves() const;						// Gets the number of octaves in this interval
+		bool isConsonant() const;					// Gets if this interval is consonant
 		std::string toString() const;				// Gets the ASCII string for this pitch
-		
 		Interval& operator=(const Interval &a);		// The assignment operator.
 		
 		
-		Interval(): quality(0), number(1)			// The default constructor
+		Interval(): quality(0), number(0)			// The default constructor
 			{ checkRep(); }
-		Interval(int q, int n):quality(q),number(n) // A constructor that takes only number and quality
+		Interval(int q, int n):						// A constructor that takes only number and quality
+			quality(q),
+			number(n-1)
 			{ checkRep(); }
 		Interval(int q, int n, int o):				// A constructor that also takes octaves
-			quality(q), number(n + o*7)
+			quality(q),
+			number(n-1 + o*7)
 			{ checkRep(); }
 		
 	private:
-		void checkRep() const;			// Ensures this class is valid
+		void checkRep() const;		// Ensures this class is valid
 		
-		int8_t quality;		// The quality of the interval
-		int8_t number;		// The number (ie: sixth, third)
+		int8_t quality;				// The quality of the interval
+		int8_t number;				// The number (ie: sixth, third)
 };
 
 // Comparison operations
@@ -154,9 +157,15 @@ class Note
 		std::string toString() const;		// Gets the ASCII representation of this Note
 		Note& operator=(const Note &a);		// An asignment operator.
 		
-		Note();								// Default constructor
-		Note(Pitch p, Count l);				// Constructor with arguments
-		Note(const Note& n);				// Copy constructor
+		Note(): pitch(),length()			// Default constructor
+			{	checkRep();	}
+		Note(Pitch p, Count l):				// Constructor with arguments
+			pitch(p), length(l)
+			{	checkRep();	}
+		Note(const Note& n):				// Copy constructor
+			pitch(n.getPitch()),
+			length(n.getLength())
+			{	checkRep();	}
 
 	private:
 		void checkRep() const;				// Ensures this class is valid

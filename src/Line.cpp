@@ -28,13 +28,13 @@ void Line::add(Note n)
 // Gets the i-th note.
 Note Line::get(int i) const
 {
-	if(i+1 < (int)notes.size() && i >= 0)
+	if(i < (int)notes.size() && i >= 0)
 	{
 		return Note(notes[i]);
 	}
 	else
 	{
-		std::cerr << "Out of bounds!" << std::endl;
+		std::cerr << "Error: Line: Out of bounds!" << std::endl;
 		return Note();
 	}
 }
