@@ -69,7 +69,6 @@ class Progression
 		std::vector<Chord> chords;			// The notes and rests of this melody
 };
 
-/*
 ////////////////////////////////////////////////
 //                  PIECE                     //
 ////////////////////////////////////////////////
@@ -78,6 +77,7 @@ class Progression
 ////////////////////////////////////////////////
 class Piece
 {
+	/*
 	public:
 		void add(Note n);					// Adds a given note to the end of the line.
 		Note get(int i) const;				// Gets the i-th note in this line.
@@ -97,6 +97,7 @@ class Piece
 		Count length;
 		std::vector<Note> notes;			// The notes and rests of this melody
 		int restoringForce;					// The desire of the line to move in a given direction
+	*/
 };
-*/
+
 #endif

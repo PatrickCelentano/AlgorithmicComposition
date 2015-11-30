@@ -51,9 +51,11 @@ std::string Sonority::toString() const
 {
 	switch(type)
 	{
-		case MAJOR:		return root.toString()+"M";
-		case MINOR:		return root.toString()+"m";
-		case POWER:		return root.toString()+"(no 3)";
+		case MAJOR:			return root.toString()+"M";
+		case MINOR:			return root.toString()+"m";
+		case DIMINISHED:	return root.toString()+"o";
+		case AUGMENTED:		return root.toString()+"+";
+		case POWER:			return root.toString()+"(no 3)";
 	}
 	return "ERROR!";
 }
@@ -94,7 +96,26 @@ Sonority::Sonority(const Pitch& p, int t): type(t), root(p), pitchesByHeight(), 
 			pitchesByDegree.push_back(root);
 			pitchesByDegree.push_back(root+Interval(MINOR,3));
 			pitchesByDegree.push_back(root+Interval(PERFECT,5));
+			break;
+				
+		case DIMINISHED:			
+			pitchesByHeight.push_back(root);
+			pitchesByHeight.push_back(root+Interval(MINOR,3));
+			pitchesByHeight.push_back(root+Interval(DIMINISHED,5));
 			
+			pitchesByDegree.push_back(root);
+			pitchesByDegree.push_back(root+Interval(MINOR,3));
+			pitchesByDegree.push_back(root+Interval(DIMINISHED,5));
+			break;
+				
+		case AUGMENTED:			
+			pitchesByHeight.push_back(root);
+			pitchesByHeight.push_back(root+Interval(MAJOR,3));
+			pitchesByHeight.push_back(root+Interval(AUGMENTED,5));
+			
+			pitchesByDegree.push_back(root);
+			pitchesByDegree.push_back(root+Interval(MAJOR,3));
+			pitchesByDegree.push_back(root+Interval(AUGMENTED,5));
 			break;
 	}
 	

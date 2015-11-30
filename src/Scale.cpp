@@ -10,7 +10,7 @@ Pitch Scale::getDegree(int d) const
 Pitch Scale::getDegree(int d, int p) const
 {
 	Pitch pitch;
-	if(p <= d)
+	if(p < d)
 	{
 		pitch = ascending[(d+7777)%7];
 	}

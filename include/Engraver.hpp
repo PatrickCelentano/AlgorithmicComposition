@@ -1,26 +1,18 @@
-#ifndef __COMPOSER_HPP__
-#define __COMPOSER_HPP__
+#ifndef __ENGRAVER_HPP__
+#define __ENGRAVER_HPP__
 
 #include <string>
-#include <cstdlib>
-#include <stdint.h>
 #include <iostream>
 #include <fstream>
 
-#include "Base.hpp"
-#include "Form.hpp"
-#include "Harmony.hpp"
 #include "Defines.hpp"
 
 ////////////////////////////////////////////////
-//                COMPOSER                    //
+//                ENGRAVER                    //
 ////////////////////////////////////////////////
-// A class used for compositional purposes.   //
-// All functions are static, and are meant to //
-// be called either from main, or by each oth-//
-// er in a full composition.                  //
+// A class used for engraving purposes.       //
 ////////////////////////////////////////////////
-class Composer
+class Engraver
 {
 	public:
 		static void writeToLilyPond(Line line1,Line line2)
@@ -96,4 +88,5 @@ class Composer
 			writeToLilyPond(melody,Line());
 		}
 };
+
 #endif

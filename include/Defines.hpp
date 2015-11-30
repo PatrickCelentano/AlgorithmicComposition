@@ -45,13 +45,13 @@
 // Note: these values are actually
 // significant, as subtraction, etc.
 // are used to speed up calculation.
-#define TONIC 1
-#define SUPERTONIC 2
-#define MEDIANT 3
-#define SUBDOMINANT 4
-#define DOMINANT 5
-#define SUBMEDIANT 6
-#define LEADING_TONE 7
+#define TONIC 0
+#define SUPERTONIC 1
+#define MEDIANT 2
+#define SUBDOMINANT 3
+#define DOMINANT 4
+#define SUBMEDIANT 5
+#define LEADING_TONE 6
 
 // Scale Types
 // Note: these values are mostly
@@ -88,14 +88,23 @@
 #define SECOND_INVERSION 2
 #define THIRD_INVERSION 3
 
-// Defined classes
-class Pitch;
+// Base classes
 class Interval;
-class Scale;
+class Pitch;
 class Count;
-class Line;
-struct Event;
-struct Rest;
-struct Note;
+class Note;
+
+// Harmony classes
+class Interval;
+class Pitch;
+class Count;
+class Note;
+
+// Base classes
+class Sonority;
+class Chord;
+class Function;
+class Scale;
+class Key;
 
 #endif

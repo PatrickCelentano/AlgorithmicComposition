@@ -19,7 +19,7 @@ class OutcomeSet
 		T getOutcome(int seed) const;
 		
 		OutcomeSet():			// Default constructor
-			totalWeight(0),
+			totalWeight(0.0f),
 			values(),
 			weights() {}
 	private:
@@ -36,7 +36,9 @@ void OutcomeSet<T>::addOutcome(T key, float weight)
 	{
 		if(values[i] == key)
 		{
-			std::cerr << "Error: Added duplicated outcome! " << std::endl;
+			// If it's already in, just increase the odds.
+			weights[i] += weight;
+			totalWeight += weight;
 		}
 	}
 	// Adds in the new value

@@ -2,89 +2,255 @@
 #include "Form.hpp"
 #include "Harmony.hpp"
 #include "Defines.hpp"
-#include "Composer.hpp"
+#include "Engraver.hpp"
 #include "MarkovChain.hpp"
-#include "OutcomeSet.hpp"
 
+#include <string>
+#include <iostream>
 #include <stdlib.h>
 #include <time.h>
 
 using namespace std;
 
-int main()
+
+MarkovChain<int>* initHarmonyMarkovChain();
+vector<int>* generateProgression(MarkovChain<int>*, unsigned int);
+vector<int>* generateMelody(vector<int>*);
+
+int main(int argc, char* argv[])
 {
-	srand(time(NULL));
+	// All of our lovely variables.
 	Line line;
 	Progression progression;
-	Scale scale(Pitch(C,NATURAL,4),HARMONIC_MINOR);
-	Key key(Pitch(C,NATURAL,4),HARMONIC_MINOR);
+	Key key(Pitch(C,NATURAL,4),		MAJOR);
+	Scale scale(Pitch(C,NATURAL,4),	MAJOR);
 	
-	std::vector<vector<int>*> progs;
+	// Set the random seed.
+	srand(time(NULL));
 	
-	vector<int>* one = new vector<int>;
-	vector<int>* two = new vector<int>;
-	vector<int>* three = new vector<int>;
-	vector<int>* four = new vector<int>;
-	vector<int>* five = new vector<int>;
-	vector<int>* six = new vector<int>;
-	vector<int>* seven = new vector<int>;
+	// Initializes the "random" compositional elements.
+	MarkovChain<int>* chain		= initHarmonyMarkovChain();
+	vector<int>* harmony		= generateProgression(chain,1000);
+	vector<int>* melody			= generateMelody(harmony);
 	
-	one->push_back(4);
-	one->push_back(5);
-	one->push_back(7);
-	two->push_back(6);
-	two->push_back(4);
-	two->push_back(6);
-	three->push_back(6);
-	three->push_back(4);
-	four->push_back(5);
-	four->push_back(1);
-	four->push_back(2);
-	five->push_back(6);
-	six->push_back(2);
-	six->push_back(5);
-	six->push_back(3);
-	six->push_back(4);
-	seven->push_back(1);
-	seven->push_back(3);
-	seven->push_back(6);
-	
-	progs.push_back(one);
-	progs.push_back(two);
-	progs.push_back(three);
-	progs.push_back(four);
-	progs.push_back(five);
-	progs.push_back(six);
-	progs.push_back(seven);
-	
-	/*
-	for(int i = 0; i < 7; i++)
+	int lastNote = TONIC;
+	// Take the generated harmony and melody and put them in the given key.
+	for(unsigned int i = 0; i < melody->size()-1; i++)
 	{
-		std::cout << i << ": ";
-		vector<int> possible = *progs[i];
-		std::cout << possible.size() << std::endl;
+		if(i%2 ==0)
+		{
+			line.add(Note(scale.getDegree((*melody)[i],lastNote),	Count(3,16)));
+		}
+		else
+		{
+			line.add(Note(scale.getDegree((*melody)[i],lastNote),	Count(1,16)));
+		}
+			lastNote = (*melody)[i];
 	}
-	*/
-	
-	int degree = 0;
-	for(unsigned int i = 1; i < 30; i++)
+	for(unsigned int i = 0; i < harmony->size()-1; i++)
 	{
-		vector<int> possible = *progs[degree];
-		int chosen = rand()%possible.size();
-		int nextDegree = possible[chosen]-1;
-		
-		line.add(Note(scale.getDegree(degree),					Count(1,8)));
-		line.add(Note(scale.getDegree((degree+nextDegree)/2),	Count(1,8)));
-		
-		progression.add(Chord(key.getFunction(degree)-Interval(PERFECT,8),Count(1,4)));
-		
-		degree = nextDegree;
+		if(i%2 ==0)
+		{
+			progression.add(Chord(key.getFunction((*harmony)[i]),	Count(1,4)));
+		}
+		else
+		{
+			progression.add(Chord(key.getFunction((*harmony)[i]),	Count(1,4)));
+		}
 	}
-	//Composer::writeSimpleMelody(rand());
-	Composer::writeToLilyPond(line,progression);
+	
+	// Use the Engraver class to write to a LilyPond file.
+	Engraver::writeToLilyPond(line,progression);
+	
+	// It's only polite to free memory.
+	delete chain;
+	delete harmony;
+	delete melody;
+	
 	return 0;
 }
 
+MarkovChain<int>* initHarmonyMarkovChain()
+{
+	MarkovChain<int>* harmony = new MarkovChain<int>(1);
+	
+	harmony->addOutcome(TONIC,1.0f,SUBDOMINANT);
+	harmony->addOutcome(TONIC,1.0f,DOMINANT);
+	harmony->addOutcome(TONIC,1.0f,LEADING_TONE);
+	
+	harmony->addOutcome(SUPERTONIC,1.0f,SUBMEDIANT);
+	harmony->addOutcome(SUPERTONIC,1.0f,SUBDOMINANT);
+	
+	harmony->addOutcome(MEDIANT,1.0f,SUBMEDIANT);
+	harmony->addOutcome(MEDIANT,1.0f,SUBDOMINANT);
+	
+	harmony->addOutcome(SUBDOMINANT,1.0f,DOMINANT);
+	harmony->addOutcome(SUBDOMINANT,1.0f,TONIC);
+	harmony->addOutcome(SUBDOMINANT,1.0f,SUPERTONIC);
+	
+	harmony->addOutcome(DOMINANT,1.0f,TONIC);
+	harmony->addOutcome(DOMINANT,1.0f,SUBMEDIANT);
+	
+	harmony->addOutcome(SUBMEDIANT,1.0f,SUPERTONIC);
+	harmony->addOutcome(SUBMEDIANT,1.0f,DOMINANT);
+	harmony->addOutcome(SUBMEDIANT,1.0f,MEDIANT);
+	harmony->addOutcome(SUBMEDIANT,1.0f,SUBDOMINANT);
+	
+	harmony->addOutcome(LEADING_TONE,1.0f,TONIC);
+	harmony->addOutcome(LEADING_TONE,1.0f,MEDIANT);
+	harmony->addOutcome(LEADING_TONE,1.0f,SUBMEDIANT);
+	
+	return harmony;
+}
+
+vector<int>* generateProgression(MarkovChain<int>* markovChain, unsigned int length)
+{
+	vector<int>* toReturn = new vector<int>();
+	
+	int currentFunction = TONIC;
+	for(unsigned int i = 0; i < length; i++)
+	{
+		toReturn->push_back(currentFunction);
+		currentFunction = markovChain->getOutcome(currentFunction,rand());
+	}
+	
+	return toReturn;
+}
+
+vector<int>* generateMelody(vector<int>* harmony)
+{	
+	vector<int> pitches;
+	vector<int>* toReturn = new vector<int>();
+	
+	int curPitch = TONIC;
+	
+	// Simply use the generated functional harmony to generate
+	// actual chords and a very simple melody.
+	for(unsigned int i = 0; i < harmony->size()-1; i++)
+	{
+		int curFunction = (*harmony)[i];
+		int random = rand()%3;
+		
+		if(random == 0)
+		{
+			curPitch = curFunction;
+		}
+		else if(random == 1)
+		{
+			curPitch = curFunction+2;
+		}
+		else if(random == 2)
+		{
+			curPitch = curFunction+4;
+		}
+		
+		if(pitches.size() > 0)
+		{
+			if(curPitch-pitches[pitches.size()-1] < -7)
+			{
+				curPitch += 7;
+			}
+			else if(curPitch-pitches[pitches.size()-1] > 7)
+			{
+				curPitch -= 7;
+			}
+		}
+		
+		pitches.push_back(curPitch);
+	}
+	for(unsigned int i = 0; i < pitches.size()-1; i++)
+	{
+		toReturn->push_back(pitches[i]);
+		if(i < pitches.size()-1)
+		{
+			toReturn->push_back((pitches[i]+pitches[i+1])/2);
+		}
+	}
+	
+	return toReturn;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+int distToRoot	= (curPitch-curFunction+7777)%7;
+int distToThird	= (curPitch-curFunction+7777+2)%7;
+int distToFifth	= (curPitch-curFunction+7777+5)%7;
+
+if(distToRoot <= distToThird && distToRoot <= distToFifth)
+	curPitch = curFunction;
+
+if(distToThird <= distToRoot && distToThird <= distToFifth)
+	curPitch = (curFunction+2)&7;
+
+if(distToFifth <= distToRoot && distToFifth <= distToThird)
+	curPitch = (curFunction+4)%7;
+
+toReturn->push_back(curPitch);
+
+cout << "Function: " << curFunction << " Pitch: " << curPitch << endl;
+
+int newPitch;
+
+curFunction = (*harmony)[i+1];
+distToRoot	= (curPitch-curFunction+7777)%7;
+distToThird	= (curPitch-curFunction+7777+2)%7;
+distToFifth	= (curPitch-curFunction+7777+5)%7;
+
+if(distToRoot <= distToThird && distToRoot <= distToFifth)
+	newPitch = curFunction;
+
+if(distToThird <= distToRoot && distToThird <= distToFifth)
+	newPitch = (curFunction+2)&7;
+
+if(distToFifth <= distToRoot && distToFifth <= distToThird)
+	newPitch = (curFunction+4)%7;
+
+toReturn->push_back((curPitch+newPitch)/2);
+
+cout << "Function: " << curFunction << " Pitch: " << (curPitch+newPitch)/2 << endl;
+*/
 
 
 

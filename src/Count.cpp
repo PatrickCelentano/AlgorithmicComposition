@@ -65,6 +65,8 @@ Count::Count(int b, int s)
 	// Divides the numbers by their gcd
 	subdivision = s/y;
     beat = b/y;
+	
+	checkRep();
 }
 
 // A copy constructor for Count
@@ -77,7 +79,7 @@ Count::Count(const Count& c): beat(c.getBeat()), subdivision(c.getSubdivision())
 void Count::checkRep() const
 {
 	if(subdivision <= 0 || beat < 0)
-		std::cerr << "This count is invalid!" << std::endl;
+		std::cerr << "Error: Count: This count is invalid!" << std::endl;
 	
 	int a = subdivision;
 	int b = beat;
@@ -131,13 +133,13 @@ Count operator-=(const Count &a, const Count &b)
 // Augmentation
 Count operator*(const Count &a, int scalar)
 {
-	return Count(	a.getBeat()*scalar, a.getSubdivision());
+	return Count(a.getBeat()*scalar, a.getSubdivision());
 }
 
 // Diminution
 Count operator/(const Count &a, int scalar)
 {
-	return Count(	a.getBeat(), a.getSubdivision()*scalar);
+	return Count(a.getBeat(), a.getSubdivision()*scalar);
 }
 
 // A straightforward equality operator for Count
