@@ -48,7 +48,7 @@ class Engraver
 			
 			file.close();
 		}
-		static void writeToLilyPond(Line line,Progression progression)
+		static void writeToLilyPond(unsigned int upper, unsigned int lower, Line* line, Progression* progression)
 		{
 			// The file we're writing to.
 			std::ofstream file;
@@ -66,12 +66,16 @@ class Engraver
 			file << "			\\new Staff = \"upper\"\n";
 			file << "			\\absolute{\n";
 			file << "				\\clef treble\n";
-			file << "				" << line.toLilyPond() << "\n";
+			file << "				\\numericTimeSignature\n";
+			file << "				\\time" << upper << "/" << lower << "\n";
+			file << "				" << line->toLilyPond() << "\n";
 			file << "			}\n";
 			file << "			\\new Staff = \"lower\"\n";
 			file << "			\\absolute{\n";
 			file << "				\\clef bass\n";
-			file << "				" << progression.toLilyPond() << "\n";
+			file << "				\\numericTimeSignature\n";
+			file << "				\\time" << upper << "/" << lower << "\n";
+			file << "				" << progression->toLilyPond() << "\n";
 			file << "			}\n";
 			file << "		>>\n";
 			file << "	>>\n";

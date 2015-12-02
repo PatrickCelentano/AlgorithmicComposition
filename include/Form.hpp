@@ -20,6 +20,7 @@ class Line
 	public:
 		void add(Note n);					// Adds a given note to the end of the line.
 		Note get(int i) const;				// Gets the i-th note in this line.
+		Note get(Count c) const;			// Gets the note at Count c;
 		int getRestoringForce() const;		// Gets the desire of this line to move in a given direction.
 		Count getLength() const;
 		std::string toLilyPond() const;		// Gets a string of the LilyPond representation of this Line.
@@ -54,6 +55,7 @@ class Progression
 	public:
 		void add(Chord n);					// Adds a given note to the end of the line.
 		Chord get(int i) const;				// Gets the i-th chord in this line.
+		Chord get(Count c) const;			// Gets the chord at Count c.
 		Count getLength() const;
 		std::string toLilyPond() const;		// Gets a string of the LilyPond representation of this Line.
 		

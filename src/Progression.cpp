@@ -4,7 +4,7 @@
 // the restoringForce accordingly.
 void Progression::add(Chord n)
 {
-	length += n.getLength();
+	length = n.getLength() + length; // Change to +=
 	chords.push_back(n);
 }
 
@@ -20,6 +20,28 @@ Chord Progression::get(int i) const
 		std::cerr << "Error: Progression: Out of bounds!" << std::endl;
 		return Chord();
 	}
+}
+
+// Gets the chord at Count c.
+Chord Progression::get(Count c) const
+{
+	if(c < length)
+	{
+		Count count;
+		for(unsigned int i = 0; i < chords.size(); i++)
+		{
+			count = count + chords[i].getLength(); // Change to +=
+			if(count > c)
+			{
+				return chords[i];
+			}
+		}
+	}
+	else
+	{
+		std::cerr << "Error: Progression: Out of bounds!" << std::endl;
+	}
+	return Chord();
 }
 
 // Gets the length of the Progression (in Counts).
@@ -48,7 +70,6 @@ std::string Progression::toLilyPond() const
 			std::string pitch;
 			int pClass       = sonority.get(i).getClass();
 			int accidental   = sonority.get(i).getAccidental();
-			int octave       = sonority.get(i).getOctave();
 			
 			// Gets the LilyPond notation of the pitch (or rest).
 			if(pClass == REST)

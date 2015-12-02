@@ -1,5 +1,6 @@
 #include "Base.hpp"
 #include "Form.hpp"
+#include "Rhythm.hpp"
 #include "Harmony.hpp"
 #include "Defines.hpp"
 #include "Engraver.hpp"
@@ -9,66 +10,65 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 using namespace std;
 
-
 MarkovChain<int>* initHarmonyMarkovChain();
-vector<int>* generateProgression(MarkovChain<int>*, unsigned int);
-vector<int>* generateMelody(vector<int>*);
+Line* generateMelody(Scale, Rhythm*, Progression*);
+Progression* generateProgression(Key, Rhythm*, MarkovChain<int>*);
+Rhythm* generateRhythm(unsigned int, unsigned int,unsigned int, unsigned int);
+
+/*
+Rhythm* generateRhythm(unsigned int, unsigned int, unsigned int);
+Rhythm* generateHarmonicRhythm(unsigned int, unsigned int, unsigned int);
+*/
 
 int main(int argc, char* argv[])
 {
-	// All of our lovely variables.
-	Line line;
-	Progression progression;
-	Key key(Pitch(C,NATURAL,4),		MAJOR);
-	Scale scale(Pitch(C,NATURAL,4),	MAJOR);
-	
+	// Piece-wide variables
+	unsigned int upper = 3;
+	unsigned int lower = 4;
+	unsigned int measures = 40;
+	Key key(Pitch(E,NATURAL,4),		MAJOR);
+	Scale scale(Pitch(E,NATURAL,4),	MAJOR);
+		
 	// Set the random seed.
 	srand(time(NULL));
 	
 	// Initializes the "random" compositional elements.
-	MarkovChain<int>* chain		= initHarmonyMarkovChain();
-	vector<int>* harmony		= generateProgression(chain,1000);
-	vector<int>* melody			= generateMelody(harmony);
-	
-	int lastNote = TONIC;
-	// Take the generated harmony and melody and put them in the given key.
-	for(unsigned int i = 0; i < melody->size()-1; i++)
-	{
-		if(i%2 ==0)
-		{
-			line.add(Note(scale.getDegree((*melody)[i],lastNote),	Count(3,16)));
-		}
-		else
-		{
-			line.add(Note(scale.getDegree((*melody)[i],lastNote),	Count(1,16)));
-		}
-			lastNote = (*melody)[i];
-	}
-	for(unsigned int i = 0; i < harmony->size()-1; i++)
-	{
-		if(i%2 ==0)
-		{
-			progression.add(Chord(key.getFunction((*harmony)[i]),	Count(1,4)));
-		}
-		else
-		{
-			progression.add(Chord(key.getFunction((*harmony)[i]),	Count(1,4)));
-		}
-	}
+	MarkovChain<int>* chain			= initHarmonyMarkovChain();
+	Rhythm* harmonicRhythm			= generateRhythm(upper,lower,measures,4);
+	Rhythm* melodicRhythm			= generateRhythm(upper,lower,measures,4);
+	Progression* progression		= generateProgression(key,harmonicRhythm,chain);
+	Line* melody					= generateMelody(scale,melodicRhythm,progression);
 	
 	// Use the Engraver class to write to a LilyPond file.
-	Engraver::writeToLilyPond(line,progression);
+	Engraver::writeToLilyPond(upper,lower,melody,progression);
 	
 	// It's only polite to free memory.
 	delete chain;
-	delete harmony;
+	delete harmonicRhythm;
+	delete melodicRhythm;
+	delete progression;
 	delete melody;
 	
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 MarkovChain<int>* initHarmonyMarkovChain()
 {
@@ -103,22 +103,207 @@ MarkovChain<int>* initHarmonyMarkovChain()
 	return harmony;
 }
 
-vector<int>* generateProgression(MarkovChain<int>* markovChain, unsigned int length)
+Line* generateMelody(Scale scale, Rhythm* rhythm, Progression* progression)
 {
-	vector<int>* toReturn = new vector<int>();
+	Line* line = new Line();	
+	Count count;
+	
+	for(unsigned int i = 0; i < rhythm->size(); i++)
+	{
+		int options = progression->get(count).getSonority().size();
+		line->add(Note(progression->get(count).getSonority().get(rand()%options),(*rhythm)[i]));
+		count = count + (*rhythm)[i];
+	}
+	
+	return line;
+}
+
+Progression* generateProgression(Key key, Rhythm* rhythm, MarkovChain<int>* markovChain)
+{
+	Progression* progression	= new Progression();
+	vector<int>* functions		= new vector<int>();
 	
 	int currentFunction = TONIC;
-	for(unsigned int i = 0; i < length; i++)
+	for(unsigned int i = 0; i < rhythm->size(); i++)
 	{
-		toReturn->push_back(currentFunction);
+		functions->push_back(currentFunction);
+		progression->add(Chord(key.getFunction(currentFunction),(*rhythm)[i]));
 		currentFunction = markovChain->getOutcome(currentFunction,rand());
+	}
+	return progression;
+}
+
+Rhythm* generateRhythm(unsigned int upper, unsigned int lower, unsigned int measures, unsigned int speed)
+{
+	Count basicBeat;
+	unsigned int beatSubdivision;
+	unsigned int beatsPerMeasure;
+	Rhythm* toReturn = new Rhythm();
+	
+	switch(lower)
+	{
+		case 2:
+			basicBeat = Count(1,2);
+			beatSubdivision = 2;
+			beatsPerMeasure = upper;
+			break;
+		case 4:
+			basicBeat = Count(1,4);
+			beatSubdivision = 2;
+			beatsPerMeasure = upper;
+			break;
+		case 8:
+			basicBeat = Count(3,8);
+			beatSubdivision = 3;
+			beatsPerMeasure = upper/3;
+			break;
+		default:
+			cerr << "Error: Main: Unrecognized time siignature." << endl;
+			break;
+	}
+	
+	for(unsigned int i = 0; i < measures; i++)
+	{
+		unsigned int speed1 = rand()%speed;
+		
+		if(speed1 == 0)
+		{
+			(*toReturn) += basicBeat*beatsPerMeasure;
+		}
+		else
+		{
+			for(unsigned int j = 0; j < beatsPerMeasure; j++)
+			{
+				unsigned int speed2 = rand()%speed;
+				if(speed2 > 1)
+				{
+					int subdivision = beatSubdivision*(pow(2,speed2-2));
+					cout << subdivision << endl;
+					for(unsigned int k = 0; k < subdivision; k++)
+					{
+						(*toReturn) += basicBeat/subdivision;
+					}
+				}
+				else
+				{
+					(*toReturn) += basicBeat;
+				}
+			}
+		}
 	}
 	
 	return toReturn;
 }
 
-vector<int>* generateMelody(vector<int>* harmony)
-{	
+
+
+
+
+
+
+
+
+
+
+
+/*
+vector<Count>* generateRhythm(unsigned int a, unsigned int b, unsigned int length)
+{
+	vector<Count>* toReturn = new vector<Count>();
+	
+	Count basicBeat;
+	Count smallPartBeat;
+	Count largePartBeat;
+	
+	if(b == 8)
+	{
+		basicBeat		= Count(3,8);
+		smallPartBeat	= Count(1,8);
+		largePartBeat	= Count(1,4);
+		a /= 3;
+	}
+	else if(b == 4)
+	{
+		basicBeat		= Count(1,4);
+		smallPartBeat	= Count(1,8);
+		largePartBeat	= Count(3,8);
+	}
+	
+	for(unsigned int i = 0; i < length; i++)
+	{
+		// Create all the notes somewhat evenly;
+		for(unsigned int j = 0; j < a; j++)
+		{
+			// Adds single-beat fragments.
+			unsigned int random = rand()%5;
+			switch(random)
+			{
+				case 0:
+						toReturn->push_back(smallPartBeat);
+						toReturn->push_back(largePartBeat);
+						break;
+				case 1:
+						toReturn->push_back(largePartBeat);
+						toReturn->push_back(smallPartBeat);
+						break;
+				case 2:
+				case 3:
+				case 4:
+						toReturn->push_back(basicBeat);
+						break;
+			}
+		}
+	}
+	
+	return toReturn;
+}
+
+vector<Count>* generateHarmonicRhythm(unsigned int a, unsigned int b, unsigned int length)
+{
+	vector<Count>* toReturn = new vector<Count>();
+	
+	Count basicBeat;
+	Count smallPartBeat;
+	Count largePartBeat;
+	
+	std::cout << a << b << endl;
+	if(b == 8)
+	{
+		basicBeat		= Count(6,8);
+		smallPartBeat	= Count(3,8);
+		largePartBeat	= Count(3,8);
+		a /= 3;
+	}
+	else if(b == 4)
+	{
+		basicBeat		= Count(4,4);
+		smallPartBeat	= Count(1,2);
+		largePartBeat	= Count(1,2);
+	}
+	
+	for(unsigned int i = 0; i < length; i++)
+	{
+		for(unsigned int j = 0; j < a; j++)
+		{
+			// Adds single-beat fragments.
+			unsigned int random = rand()%5;
+			switch(random)
+			{
+				case 0:
+						toReturn->push_back(smallPartBeat);
+						toReturn->push_back(largePartBeat);
+						break;
+				case 4:
+						toReturn->push_back(basicBeat);
+						break;
+			}
+		}
+	}
+	
+	return toReturn;
+}
+*/
+/*
 	vector<int> pitches;
 	vector<int>* toReturn = new vector<int>();
 	
@@ -166,448 +351,4 @@ vector<int>* generateMelody(vector<int>* harmony)
 			toReturn->push_back((pitches[i]+pitches[i+1])/2);
 		}
 	}
-	
-	return toReturn;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-int distToRoot	= (curPitch-curFunction+7777)%7;
-int distToThird	= (curPitch-curFunction+7777+2)%7;
-int distToFifth	= (curPitch-curFunction+7777+5)%7;
-
-if(distToRoot <= distToThird && distToRoot <= distToFifth)
-	curPitch = curFunction;
-
-if(distToThird <= distToRoot && distToThird <= distToFifth)
-	curPitch = (curFunction+2)&7;
-
-if(distToFifth <= distToRoot && distToFifth <= distToThird)
-	curPitch = (curFunction+4)%7;
-
-toReturn->push_back(curPitch);
-
-cout << "Function: " << curFunction << " Pitch: " << curPitch << endl;
-
-int newPitch;
-
-curFunction = (*harmony)[i+1];
-distToRoot	= (curPitch-curFunction+7777)%7;
-distToThird	= (curPitch-curFunction+7777+2)%7;
-distToFifth	= (curPitch-curFunction+7777+5)%7;
-
-if(distToRoot <= distToThird && distToRoot <= distToFifth)
-	newPitch = curFunction;
-
-if(distToThird <= distToRoot && distToThird <= distToFifth)
-	newPitch = (curFunction+2)&7;
-
-if(distToFifth <= distToRoot && distToFifth <= distToThird)
-	newPitch = (curFunction+4)%7;
-
-toReturn->push_back((curPitch+newPitch)/2);
-
-cout << "Function: " << curFunction << " Pitch: " << (curPitch+newPitch)/2 << endl;
-*/
-
-
-
-
-
-
-
-
-
-/*
-	Scale scale(Pitch(C,NATURAL,4),MAJOR);
-	
-	for(unsigned int i = 1; i < 20; i++)
-	{
-		std::cout << (scale.getDegree(i) - scale.getDegree(1)).toString() << std::endl;
-	}
-	Composer::writeSimpleMelody(rand());
-*/
-/*
-Pitch root(C,NATURAL,4);
-	Pitch third(E,NATURAL,4);
-	Pitch fifth(G,NATURAL,4);
-	Pitch seventh(B,NATURAL,3);
-	
-	vector<Pitch> pitches;
-	pitches.push_back(root);
-	
-	pitches.push_back(third);
-	pitches.push_back(fifth);
-	pitches.push_back(seventh);
-	
-	for(unsigned int i = 0; i < pitches.size(); i++)
-	{
-		for(unsigned int j = 0; j < pitches.size(); j++)
-		{
-			Interval interval = (Pitch)pitches[j] - (Pitch)pitches[i];
-			std::cout << pitches[j].toString() << " - " << pitches[i].toString() << " = " << interval.toString() << std::endl;
-		}
-	}
-*/
-/*
-	srand(time(NULL));
-	
-	Line melody1;
-	Line melody2;
-	
-	Scale scale(Pitch(C,NATURAL,4),MAJOR);
-	melody1.addNote(Note(scale.getDegree(1),Count(1,4)));
-	int curDegree = 1;
-	
-	for(int i = 0; i < 20; i++)
-	{
-		melody1.addNote(Note(scale.getDegree(curDegree),Count(1,4)));
-		curDegree = curDegree + rand()%5 - 3;
-	}
-	
-	for(int i = 0; i < 20; i++)
-	{
-		melody2.addNote(Note(melody1.getNote(i).getPitch()-Interval(MAJOR,3),Count(1,4)));
-	}
-	
-	Composer::writeToLilyPond(melody2,melody1);
-	
-	OutcomeSet<Pitch> outcomes;
-	outcomes.addOutcome(Pitch(C,NATURAL,4),2);
-	outcomes.addOutcome(Pitch(B,NATURAL,4),5);
-	outcomes.addOutcome(Pitch(A,NATURAL,4),3);
-	
-	for(unsigned int i = 0; i < 20; i++)
-	{
-		for(unsigned int i = 0; i < 5; i++)
-		{
-			std::cout << outcomes.getOutcome(rand()).toString() << " ";
-		}
-		std::cout << std::endl;
-	}
-	*/
-
-/*
-
-void intervalsTest();
-void scaleTest();
-*/
-/*
-	
-	cout << std::endl;
-	*/
-/*
-void intervalsTest()
-{
-	vector<Pitch> pitches;
-	pitches.push_back(Pitch(C,NATURAL,4));
-	pitches.push_back(Pitch(D,NATURAL,4));
-	pitches.push_back(Pitch(E,NATURAL,4));
-	pitches.push_back(Pitch(F,NATURAL,4));
-	pitches.push_back(Pitch(G,NATURAL,4));
-	pitches.push_back(Pitch(A,NATURAL,4));
-	pitches.push_back(Pitch(B,NATURAL,4));
-	
-	vector<Interval> intervals;
-	intervals.push_back(Interval(MINOR,2));
-	intervals.push_back(Interval(MAJOR,2));
-	intervals.push_back(Interval(MINOR,3));
-	intervals.push_back(Interval(MAJOR,3));
-	intervals.push_back(Interval(PERFECT,4));
-	intervals.push_back(Interval(PERFECT,5));
-	intervals.push_back(Interval(MINOR,6));
-	intervals.push_back(Interval(MAJOR,6));
-	intervals.push_back(Interval(MINOR,7));
-	intervals.push_back(Interval(MAJOR,7));
-	
-	for(unsigned int j = 0; j < intervals.size(); j++)
-	{
-		for(unsigned int i = 0; i < pitches.size(); i++)
-		{
-			Interval interval1 = intervals[j];
-			Pitch pitch = pitches[i] + interval1;
-			Interval interval2 = pitch - pitches[i];
-			std::cout << pitches[i]toString() << " to " << pitchtoString() << ":\t" << interval1toString() << "\tvs. " << interval2toString() << std::endl;
-		}
-		std::cout << std::endl;
-	}
-}
-void scaleTest()
-{
-	Scale scale(Pitch(C,NATURAL,4),MELODIC_MINOR);
-	std::string i;
-	int lastDeg = 1;
-	
-	while(i != "quit")
-	{
-		int newDeg = 0;
-		std::cin >> i;
-		if(i == "1") newDeg = 1;
-		if(i == "2") newDeg = 2;
-		if(i == "3") newDeg = 3;
-		if(i == "4") newDeg = 4;
-		if(i == "5") newDeg = 5;
-		if(i == "6") newDeg = 6;
-		if(i == "7") newDeg = 7;
-		if(i == "8") newDeg = 8;
-		if(i == "9") newDeg = 9;
-		if(i == "0") newDeg = 10;
-		Pitch pitch = scale.getDegree(newDeg,lastDeg);
-		std::cout << pitchtoString() << std::endl;
-	}
-}
-*/
-
-/*
-	Note a(Pitch(C,NATURAL,4),Count(1,4));
-	Note b(Pitch(B,NATURAL,4),Count(1,4));
-	Note c(Pitch(REST),Count(1,4));
-	Note d(Pitch(D,NATURAL,5),Count(1,4));
-	
-	Line melody;
-	melody.add(a);
-	melody.add(b);
-	melody.add(c);
-	melody.add(d);
-	
-	cout << melody.getLilyPond();
-	
-	Interval M3(MAJOR,3);
-	Interval m3(MINOR,3);
-	
-	Interval P5;
-	P5 = m3 + M3;
-	cout << P5toString() << endl;
-	*/
-	
-	/*
-	Pitch root(C,NATURAL,4);
-	Pitch third(E,NATURAL,4);
-	Pitch fifth(G,NATURAL,4);
-	Pitch seventh(B,NATURAL,4);
-	
-	vector<Pitch> pitches;
-	pitches.push_back(root);
-	
-	pitches.push_back(third);
-	pitches.push_back(fifth);
-	pitches.push_back(seventh);
-	
-	for(unsigned int i = 0; i < pitches.size(); i++)
-	{
-		for(unsigned int j = 0; j < pitches.size(); j++)
-		{
-			Interval interval = (Pitch)pitches[j] - (Pitch)pitches[i];
-			std::cout << pitches[j]toString() << " - " << pitches[i]toString() << " = " << intervaltoString() << std::endl;
-		}
-	}
-	*/
-	/*
-	*/
-	/*
-	vector<Pitch> scale;
-	scale.push_back(Pitch(C,SHARP,4));
-	
-	scale.push_back(Pitch(D,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(D,FLAT,4));
-	scale.push_back(Pitch(D,NATURAL,4));
-	scale.push_back(Pitch(D,SHARP,4));
-	scale.push_back(Pitch(D,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(E,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(E,FLAT,4));
-	scale.push_back(Pitch(E,NATURAL,4));
-	scale.push_back(Pitch(E,SHARP,4));
-	scale.push_back(Pitch(E,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(F,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(F,FLAT,4));
-	scale.push_back(Pitch(F,NATURAL,4));
-	scale.push_back(Pitch(F,SHARP,4));
-	scale.push_back(Pitch(F,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(G,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(G,FLAT,4));
-	scale.push_back(Pitch(G,NATURAL,4));
-	scale.push_back(Pitch(G,SHARP,4));
-	scale.push_back(Pitch(G,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(A,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(A,FLAT,4));
-	scale.push_back(Pitch(A,NATURAL,4));
-	scale.push_back(Pitch(A,SHARP,4));
-	scale.push_back(Pitch(A,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(B,DOUBLE_FLAT,4));
-	scale.push_back(Pitch(B,FLAT,4));
-	scale.push_back(Pitch(B,NATURAL,4));
-	scale.push_back(Pitch(B,SHARP,4));
-	scale.push_back(Pitch(B,DOUBLE_SHARP,4));
-	
-	scale.push_back(Pitch(D,NATURAL,4));
-	scale.push_back(Pitch(E,FLAT,4));
-	scale.push_back(Pitch(F,NATURAL,4));
-	scale.push_back(Pitch(G,NATURAL,4));
-	scale.push_back(Pitch(A,FLAT,4));
-	scale.push_back(Pitch(B,FLAT,4));
-	scale.push_back(Pitch(C,NATURAL,5));
-	scale.push_back(Pitch(D,NATURAL,5));
-	scale.push_back(Pitch(E,FLAT,5));
-	scale.push_back(Pitch(F,NATURAL,5));
-	scale.push_back(Pitch(G,NATURAL,5));
-	scale.push_back(Pitch(A,FLAT,5));
-	scale.push_back(Pitch(B,FLAT,5));
-	scale.push_back(Pitch(C,NATURAL,6));
-	
-	for(unsigned int i = 1; i < scale.size(); i++)
-	{
-		if((i-1)%5 == 0)
-			std::cout << std::endl;
-		Interval interval = (Pitch)scale[i] - (Pitch)scale[i-1];
-		std::cout << scale[i]toString() << "\t- " << scale[i-1]toString() << " = " << intervaltoString() << std::endl;
-	}
-	*/
-	
-
-	//Pitch a(C,NATURAL,4);
-	//Count b = Count(1,2);
-
-	/*
-	cout << btoString() << endl;
-	cout << (b/3+b/2)toString() << endl;
-	*/
-	
-	//Scale s(C,MAJOR);
-	//Key k(C,MAJOR);
-	
-	
-	//cout << atoString() << endl << endl;
-	
-	/*
-	// cout << "Plus " << Interval(PERFECT,1)toString() << endl;
-	cout << (a+Interval(PERFECT,1))toString() << endl;
-	
-	// cout << "Plus " << Interval(MAJOR,2)toString() << endl;
-	cout << (a+Interval(MAJOR,2))toString() << endl;
-	
-	// cout << "Plus " << Interval(MAJOR,3)toString() << endl;
-	cout << (a+Interval(MAJOR,3))toString() << endl;
-	
-	// cout << "Plus " << Interval(PERFECT,4)toString() << endl;
-	cout << (a+Interval(PERFECT,4))toString() << endl;
-	
-	// cout << "Plus " << Interval(PERFECT,5)toString() << endl;
-	cout << (a+Interval(PERFECT,5))toString() << endl;
-	
-	// cout << "Plus " << Interval(MAJOR,6)toString() << endl;
-	cout << (a+Interval(MAJOR,6))toString() << endl;
-	
-	// cout << "Plus " << Interval(MAJOR,7)toString() << endl;
-	cout << (a+Interval(MAJOR,7))toString() << endl;
-	
-	// cout << "Plus " << Interval(PERFECT,8)toString() << endl;
-	cout << (a+Interval(PERFECT,8))toString() << endl;
-	*/
-
-	/*
-	// cout << "Minus " << Interval(PERFECT,1)toString() << endl;
-	cout << (a-Interval(PERFECT,1))toString() << endl;
-	
-	// cout << "Minus " << Interval(MINOR,2)toString() << endl;
-	cout << (a-Interval(MINOR,2))toString() << endl;
-	
-	// cout << "Minus " << Interval(MINOR,3)toString() << endl;
-	cout << (a-Interval(MINOR,3))toString() << endl;
-	
-	// cout << "Minus " << Interval(PERFECT,4)toString() << endl;
-	cout << (a-Interval(PERFECT,4))toString() << endl;
-	
-	// cout << "Minus " << Interval(PERFECT,5)toString() << endl;
-	cout << (a-Interval(PERFECT,5))toString() << endl;
-	
-	// cout << "Minus " << Interval(MINOR,6)toString() << endl;
-	cout << (a-Interval(MINOR,6))toString() << endl;
-	
-	// cout << "Minus " << Interval(MINOR,7)toString() << endl;
-	cout << (a-Interval(MINOR,7))toString() << endl;
-	
-	// cout << "Minus " << Interval(PERFECT,8)toString() << endl;
-	cout << (a-Interval(PERFECT,8))toString() << endl;
-	*/
-	/*
-	vector<Pitch> pitches;
-	pitches.push_back(Pitch(C,NATURAL,4));
-	pitches.push_back(Pitch(D,NATURAL,4));
-	pitches.push_back(Pitch(E,NATURAL,4));
-	pitches.push_back(Pitch(F,NATURAL,4));
-	pitches.push_back(Pitch(G,NATURAL,4));
-	pitches.push_back(Pitch(A,NATURAL,4));
-	pitches.push_back(Pitch(B,NATURAL,4));
-	
-	vector<Interval> intervals;
-	intervals.push_back(Interval(MINOR,2));
-	intervals.push_back(Interval(MAJOR,2));
-	intervals.push_back(Interval(MINOR,3));
-	intervals.push_back(Interval(MAJOR,3));
-	intervals.push_back(Interval(PERFECT,4));
-	intervals.push_back(Interval(PERFECT,5));
-	intervals.push_back(Interval(MINOR,6));
-	intervals.push_back(Interval(MAJOR,6));
-	intervals.push_back(Interval(MINOR,7));
-	intervals.push_back(Interval(MAJOR,7));
-	
-	for(unsigned int j = 0; j < intervals.size(); j++)
-	{
-		for(unsigned int i = 0; i < pitches.size(); i++)
-		{
-			Interval interval1 = intervals[j];
-			Pitch pitch = pitches[i] + interval1;
-			Interval interval2 = pitch - pitches[i];
-			std::cout << pitches[i]toString() << " to " << pitchtoString() << ":\t" << interval1toString() << "\tvs. " << interval2toString() << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	return 0;
 	*/
